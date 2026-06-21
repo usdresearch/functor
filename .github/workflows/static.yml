@@ -1,43 +1,133 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Hourly publication for the reference implementation.
+name: Hourly publish
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+  schedule:
+    - cron: '0 * * * *'
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: hourly-publish
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  changes:
     runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.detect.outputs.has_changes }}
+      last_tag: ${{ steps.detect.outputs.last_tag }}
+      commit_count: ${{ steps.detect.outputs.commit_count }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect unpublished commits
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          last_tag="$(git describe --tags --match 'hourly-publish/*' --abbrev=0 HEAD 2>/dev/null || true)"
+          last_commit=""
+
+          if [[ -n "$last_tag" ]]; then
+            last_commit="$(git rev-list -n 1 "$last_tag")"
+          fi
+
+          if [[ -n "$last_commit" && "$last_commit" == "$GITHUB_SHA" ]]; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "last_tag=$last_tag" >> "$GITHUB_OUTPUT"
+            echo "commit_count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ -n "$last_commit" ]]; then
+            commit_count="$(git rev-list --count "${last_commit}..HEAD")"
+          else
+            commit_count="$(git rev-list --count HEAD)"
+          fi
+
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          echo "last_tag=$last_tag" >> "$GITHUB_OUTPUT"
+          echo "commit_count=$commit_count" >> "$GITHUB_OUTPUT"
+
+  noop:
+    needs: changes
+    if: needs.changes.outputs.has_changes != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip publication
+        run: echo "No commits since ${{ needs.changes.outputs.last_tag }}; nothing to publish."
+
+  publish:
+    needs: changes
+    if: needs.changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: '.'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+      - name: Prepare GitHub Release
+        id: release
+        shell: bash
+        env:
+          COMMIT_COUNT: ${{ needs.changes.outputs.commit_count }}
+          LAST_TAG: ${{ needs.changes.outputs.last_tag }}
+        run: |
+          set -euo pipefail
+
+          short_sha="${GITHUB_SHA::7}"
+          tag_name="hourly-publish/$(date -u +'%Y%m%d%H%M%S')-${short_sha}"
+          title="Hourly publish ${short_sha}"
+
+          if [[ -n "$LAST_TAG" ]]; then
+            log_range="${LAST_TAG}..HEAD"
+          else
+            log_range="HEAD"
+          fi
+
+          {
+            echo "Published from commit ${GITHUB_SHA}."
+            echo
+            echo "Commits included: ${COMMIT_COUNT}"
+            echo
+            git log --format='- %s (%h)' "$log_range"
+          } > release_notes.md
+
+          echo "tag_name=$tag_name" >> "$GITHUB_OUTPUT"
+          echo "title=$title" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.release.outputs.tag_name }}" \
+            usd_functor_reference_implementation.pdf \
+            usd_functor_reference_implementation.tex \
+            --target "$GITHUB_SHA" \
+            --title "${{ steps.release.outputs.title }}" \
+            --notes-file release_notes.md
