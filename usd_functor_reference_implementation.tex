@@ -1,0 +1,1190 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz-cd}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% -----------------------------------------------------------------------------
+% Basic notation
+% -----------------------------------------------------------------------------
+\newcommand{\USD}{\mathsf{USD}}
+\newcommand{\Base}{\mathsf{Base}}
+\newcommand{\RecUSD}{\mathsf{Rec}_{\USD}}
+\newcommand{\St}{\mathsf{St}}
+\newcommand{\UFib}{\mathcal U}
+\newcommand{\DFib}{\mathcal D}
+\newcommand{\Bnd}{\mathsf{Bnd}}
+\newcommand{\Occ}{\mathsf{Occ}}
+\newcommand{\Hand}{\mathsf{Hand}}
+\newcommand{\FreeHand}{\mathsf{FreeHand}}
+\newcommand{\Anch}{\mathsf{Anch}}
+\newcommand{\Smart}{\mathsf{Smart}}
+\newcommand{\Rel}{\mathsf{Rel}}
+\newcommand{\BVis}{\mathsf{BVis}}
+\newcommand{\Obs}{\mathsf{Obs}}
+\newcommand{\Adopt}{\mathsf{Adopt}}
+\newcommand{\NonAdopt}{\mathsf{NonAdopt}}
+\newcommand{\Collapse}{\mathsf{Collapse}}
+\newcommand{\IdLic}{\mathsf{IdLic}}
+\newcommand{\Diff}{\mathsf{Diff}}
+\newcommand{\Gap}{\mathsf{Gap}}
+\newcommand{\Seq}{\mathsf{Seq}}
+\newcommand{\Rev}{\mathsf{Rev}}
+\newcommand{\Flip}{\mathsf{Flip}}
+\newcommand{\Turn}{\mathsf{Turn}}
+\newcommand{\Elim}{\mathsf{Elim}}
+\newcommand{\Std}{\mathsf{Std}}
+\newcommand{\Lan}{\operatorname{Lan}}
+\newcommand{\Ran}{\operatorname{Ran}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\limi}{\operatorname{lim}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\xto}[1]{\xrightarrow{#1}}
+\newcommand{\xot}[1]{\xleftarrow{#1}}
+\newcommand{\defeq}{\mathrel{:=}}
+\newcommand{\uconn}{\mathrel{\leadsto_{\USD}}}
+\newcommand{\unadopt}{\mathrel{\dashrightarrow_{\USD}}}
+\newcommand{\CComp}{\mathsf{CComp}}
+\newcommand{\DComp}{\mathsf{DComp}}
+\newcommand{\EComp}{\mathsf{EComp}}
+\newcommand{\SComp}{\mathsf{SComp}}
+\newcommand{\TComp}{\mathsf{TComp}}
+\newcommand{\UComp}{\mathsf{UComp}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Pos}{\mathbf{Pos}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Prof}{\mathbf{Prof}}
+\newcommand{\Arr}{\mathsf{Arr}}
+\newcommand{\USDCalc}{\mathsf{USDCalc}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{construction}[definition]{Construction}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{assumption}[definition]{Assumption}
+\newtheorem{api}[definition]{API}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+\title{USD Functor Theory:\
+A Reference Implementation of Smart Functors with Boundary-Visible Stance}
+\author{Draft for USD Theory}
+\date{Working Draft v0.8 -- carrier-realized reference implementation draft -- \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A USD functor is not a new equality, a new physical law, or a new
+proof principle.  It is a structured functor: a pure functor equipped
+with an adoptive face, a non-adoptive face, a boundary witness, and a
+coherence contract.  The purpose of this paper is to give a reference
+implementation of such structured functors and of their safe composition
+operations.  The construction treats the adoptive and non-adoptive
+regions not as two arbitrary pre-existing categories, but as fibers of a
+single USD record fibration realized over both a carrier category and a
+two-sided stance category.  In this
+sense a USD functor is a categorical analogue of a smart pointer: after
+forgetting the additional fields it is an ordinary functor, while before
+forgetting it carries explicit bookkeeping for observation, non-adoption,
+boundary visibility, and typed composition.  Six API-level compositions
+are specified: compression, downward restriction, extension, sideways
+stabilization, temporal turnover, and upward image.  Each operation is
+presented with its type, existence conditions, mathematical
+implementation, and philosophical reading.  The conservative intent is
+made explicit: USD records may organize proof search or interpretation,
+but USD-free conclusions must be justified in the base theory.
+\end{abstract}
+
+\tableofcontents
+
+% -----------------------------------------------------------------------------
+\section{Scope and non-claims}
+% -----------------------------------------------------------------------------
+
+This draft responds to a common failure mode in early USD notation: terms
+such as relation, boundary, observation, adoption, refusal, gap, and turn
+can sound like explanatory prose rather than mathematical data.  The
+present version therefore treats USD theory as a typed reference
+implementation.  The reader should not be asked to infer the missing
+interfaces.  They are made explicit.
+
+\begin{remark}[What this paper does not claim]
+This paper does not claim that USD notation proves a new equality, a new
+inequality, a physical theorem, or a computational separation.  It does
+not identify boundary-visible connection with equality.  It does not
+identify non-adoption with ordinary negation.  It does not claim that the
+relativistic discussion below proves anything about special or general
+relativity.  The relativistic section is a test model for the vocabulary
+of observers, frames, local restrictions, and temporal records.
+\end{remark}
+
+\begin{remark}[What this paper does claim]
+This paper claims that one can specify a category of smart functors whose
+objects are ordinary functors equipped with additional USD structure, and
+that the main USD composition operations can be given as typed operations
+using standard categorical vocabulary: pushouts or gluing for compression,
+pullback or reindexing for downward composition, factorization for
+extension, fixed points for sideways stabilization, involution plus
+sequence reversal for temporal turnover, and Kan-style images for upward
+composition.
+\end{remark}
+
+The intended comparison is with a smart pointer in programming.  A raw
+pointer stores an address.  A smart pointer stores an address together
+with ownership, lifetime, and release discipline.  Likewise, a raw functor
+stores functorial action.  A USD functor stores functorial action together
+with an adoptive face and a non-adoptive face that are stance-lifts of
+the same carrier, together with a boundary witness and a coherence
+contract.  Forgetting these fields returns the raw functor.
+Keeping them enables safe composition of records without silently turning
+records into proof steps.
+
+% -----------------------------------------------------------------------------
+\section{Base data}
+% -----------------------------------------------------------------------------
+
+This section fixes the data that later sections use.  The goal is to
+avoid introducing objects such as $\Rel$, $\BVis$, $\Obs$, or $\NonAdopt$
+as undefined prose.
+
+\begin{assumption}[Context category]
+Let $\mathcal P$ be a small category.  Its objects are positions,
+contexts, observers, stages, regions, or local situations.  A morphism
+$\phi:p\to q$ is an admissible transition of context.  In concrete
+models $\mathcal P$ may be a poset, a site, or a category of local
+charts.
+\end{assumption}
+
+\begin{assumption}[Indexed entity category]
+Let
+\[
+  E:\mathcal P^{\op}\to \Cat
+\]
+be an indexed category.  For each context $p$ the category $E(p)$
+contains the entities, expressions, records, or local objects available
+at $p$.  For each transition $\phi:p\to q$, the reindexing functor
+$E(\phi):E(q)\to E(p)$ gives the local view of a $q$-object at $p$.
+\end{assumption}
+
+\begin{construction}[Situated occurrence category]
+The category of situated occurrences is the Grothendieck construction
+\[
+  \Occ(E)\defeq \int_{\mathcal P}E.
+\]
+An object is a pair $(p,x)$ with $x\in E(p)$.  A morphism
+$(p,x)\to(q,y)$ is a pair $(\phi,\alpha)$ where $\phi:p\to q$ in
+$\mathcal P$ and
+\[
+  \alpha:x\to E(\phi)(y)
+\]
+in $E(p)$.  Composition is the usual composition in the Grothendieck
+construction.
+\end{construction}
+
+This definition repairs the ambiguity that appears when a set of
+positions is used while morphisms $p\to q$ are also required.  From this
+point on, context transitions are morphisms in $\mathcal P$.
+
+\begin{assumption}[Relation witness profunctor]
+Let $\mathcal C$ be a category.  A relation witness structure on
+$\mathcal C$ is a profunctor valued in posets,
+\[
+  \Rel_{\mathcal C}:\mathcal C^{\op}\times\mathcal C\to \Pos.
+\]
+An element $r\in \Rel_{\mathcal C}(a,b)$ is a witness that $a$ and $b$
+are related in the specified sense.  Functoriality gives transport of
+relation witnesses along morphisms of $\mathcal C$.
+\end{assumption}
+
+\begin{assumption}[Boundary visibility]
+Boundary visibility is a substructure of relation witnesses.  We write
+\[
+  \BVis_{\mathcal C}\hookrightarrow \Rel_{\mathcal C}
+\]
+for a subfunctor or indexed subposet.  A boundary witness over
+$r\in\Rel_{\mathcal C}(a,b)$ is denoted
+\[
+  \beta\in \BVis_{\mathcal C}(r).
+\]
+Thus $\BVis$ is not a metaphor; it is a typed predicate over relation
+witnesses.
+\end{assumption}
+
+\begin{remark}[Minimality of the base]
+Nothing in the formal development requires $\Rel$ to be equality,
+isomorphism, equivalence, metric proximity, causal accessibility, or
+logical entailment.  Those are model choices.  The USD reference
+implementation only assumes relation witnesses and boundary witnesses.
+\end{remark}
+
+% -----------------------------------------------------------------------------
+\section{The USD record fibration}
+% -----------------------------------------------------------------------------
+
+The adoptive and non-adoptive sides are not introduced as two unrelated
+categories.  They arise as fibers of a single record fibration.
+
+\begin{definition}[Stance category]
+The stance category $\St$ has two distinguished objects
+\[
+  U,\quad D,
+\]
+called the adoptive stance and the non-adoptive stance.  We assume an
+involutive equivalence
+\[
+  \tau:\St\to\St,
+  \qquad \tau(U)=D,
+  \qquad \tau(D)=U,
+  \qquad \tau^2\cong 1_{\St}.
+\]
+The category $\St$ may be taken discrete in the minimal model.  In richer
+models it may contain comparison morphisms between stances.
+\end{definition}
+
+\begin{definition}[USD record fibration]
+A USD record fibration is a functor
+\[
+  \pi:\RecUSD\to \St.
+\]
+The fiber over $U$ is the adoptive record category
+\[
+  \UFib\defeq \pi^{-1}(U),
+\]
+and the fiber over $D$ is the non-adoptive record category
+\[
+  \DFib\defeq \pi^{-1}(D).
+\]
+The notation $\UFib$ and $\DFib$ therefore denotes fibers of one record
+fibration, not two arbitrary background categories.
+\end{definition}
+
+\begin{definition}[Carrier-realized USD record fibration]
+Fix a carrier category $\mathcal C$.  A carrier-realized USD record
+fibration over $\mathcal C$ is a USD record fibration together with a
+realization functor
+\[
+  r:\RecUSD\to\mathcal C
+\]
+and hence a combined projection
+\[
+  q=(r,\pi):\RecUSD\to\mathcal C\times\St.
+\]
+We require
+\[
+  \operatorname{pr}_{\St}\circ q=\pi,
+  \qquad
+  \operatorname{pr}_{\mathcal C}\circ q=r.
+\]
+Thus every USD record has both a stance and a realized carrier.  For
+$c\in\mathcal C$ and $s\in\St$, the notation
+\[
+  (\RecUSD)_{(c,s)}\defeq q^{-1}(c,s)
+\]
+denotes the category of stance-$s$ records realizing the carrier datum
+$c$.  The notation suppresses the dependence of $\RecUSD$ on
+$\mathcal C$ when no confusion is possible.
+\end{definition}
+
+\begin{remark}[Why realization is required]
+The projection $\pi:\RecUSD\to\St$ separates adoptive from non-adoptive
+records, but by itself it does not say which ordinary carrier object a
+record is about.  The realization functor $r:\RecUSD\to\mathcal C$ fills
+this gap.  It prevents the pure carrier, the adoptive face, and the
+non-adoptive face of a USD functor from becoming three unrelated
+functors.
+\end{remark}
+
+\begin{definition}[Record constructors]
+The record category contains typed constructors
+\[
+  \Obs,
+  \qquad \Adopt,
+  \qquad \NonAdopt,
+  \qquad \Bnd,
+  \qquad \Collapse,
+\]
+with the following intended types:
+\begin{align*}
+  \Obs &: \text{raw datum}\to \RecUSD,\\
+  \Adopt &: \Rel_{\mathcal C}(a,b)\to \UFib,\\
+  \NonAdopt &: \Rel_{\mathcal C}(a,b)\to \DFib,\\
+  \Bnd &: \BVis_{\mathcal C}(r)\to \RecUSD,\\
+  \Collapse &: \Rel_{\mathcal C}(a,b)\to \RecUSD.
+\end{align*}
+These constructors are part of the syntax of records.  A model may
+interpret them as evidence, annotations, proof-search traces, logs, or
+semantic states.  The realization functor $r:\RecUSD\to\mathcal C$
+records which carrier datum such a constructed record is about; two
+records may have different stances while realizing the same carrier.
+\end{definition}
+
+\begin{definition}[Directed stance notation]
+Given $x,y$ in a common context, the notation
+\[
+  x\uconn y
+\]
+means that a boundary-visible connection record from $x$ to $y$ has been
+constructed.  The notation
+\[
+  x\unadopt y
+\]
+means that a proposed connection from $x$ to $y$ has been observed but is
+recorded on the non-adoptive side.  Neither notation is equality or
+ordinary inequality.
+\end{definition}
+
+% -----------------------------------------------------------------------------
+\section{USD functors as smart functors}
+% -----------------------------------------------------------------------------
+
+We now define the main object.  The definition is deliberately close to a
+reference implementation: a USD functor is a record with fields.
+
+\begin{definition}[Pure carrier]
+Let $\mathcal X$ and $\mathcal C$ be categories.  A pure carrier is an
+ordinary functor
+\[
+  F:\mathcal X\to\mathcal C.
+\]
+It is the raw functor that remains after forgetting all USD metadata.
+\end{definition}
+
+
+\begin{definition}[Stance-lifts of a carrier]
+Let $q=(r,\pi):\RecUSD\to\mathcal C\times\St$ be a carrier-realized USD
+record fibration and let $F:\mathcal X\to\mathcal C$ be a pure carrier.
+Write
+\[
+  \underline U,\underline D:\mathcal X\to\St
+\]
+for the constant functors at the two stances.  A strict adoptive
+stance-lift of $F$ is a functor
+\[
+  U_F:\mathcal X\to\RecUSD
+\]
+such that
+\[
+  q\circ U_F=(F,\underline U),
+\]
+and a strict non-adoptive stance-lift of $F$ is a functor
+\[
+  D_F:\mathcal X\to\RecUSD
+\]
+such that
+\[
+  q\circ D_F=(F,\underline D).
+\]
+Equivalently, $\pi U_F=\underline U$, $\pi D_F=\underline D$, and
+$rU_F=F=rD_F$.  In a lax model, these equalities may be replaced by
+specified comparison 2-cells, but the strict form is the reference
+implementation used in the main text.
+\end{definition}
+
+\begin{definition}[USD functor]
+A USD functor from $\mathcal X$ to $\mathcal C$ is a tuple
+\[
+  \mathbb H=(F,U_F,D_F,\partial_F,\kappa_F)
+\]
+where:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+  \item $F:\mathcal X\to\mathcal C$ is a pure carrier functor.
+  \item $U_F:\mathcal X\to\RecUSD$ is a strict adoptive stance-lift of
+  $F$, so $q\circ U_F=(F,\underline U)$.
+  \item $D_F:\mathcal X\to\RecUSD$ is a strict non-adoptive stance-lift
+  of $F$, so $q\circ D_F=(F,\underline D)$.
+  \item $\partial_F$ is boundary data over the common carrier $F$,
+  relating the two stance-lifts.  A minimal implementation treats
+  $\partial_F$ as a family of witnesses
+  \[
+    \partial_F(x)\in \Bnd_F(U_F(x),D_F(x))
+  \]
+  natural in $x\in\mathcal X$.
+  \item $\kappa_F$ is a coherence contract governing lifts, boundary data,
+  morphisms, compositions, erasure, and descent.
+\end{enumerate}
+The critical point is that $U_F$ and $D_F$ do not merely accompany $F$:
+they are records over the same realized carrier $F$.
+\end{definition}
+
+\begin{definition}[Coherence contract]
+For a USD functor $\mathbb H=(F,U_F,D_F,\partial_F,\kappa_F)$, the
+coherence contract is a tuple of obligations
+\[
+  \kappa_F=(\kappa_F^{\mathrm{lift}},
+            \kappa_F^{\partial},
+            \kappa_F^{\mathrm{mor}},
+            \kappa_F^{\mathrm{comp}},
+            \kappa_F^{\mathrm{erase}},
+            \kappa_F^{\mathrm{desc}}).
+\]
+Here:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+  \item $\kappa_F^{\mathrm{lift}}$ asserts the stance-lift equations
+  $q\circ U_F=(F,\underline U)$ and $q\circ D_F=(F,\underline D)$.
+  \item $\kappa_F^{\partial}$ asserts that $\partial_F$ is defined over
+  the common realized carrier $F$ and is natural in $\mathcal X$.
+  \item $\kappa_F^{\mathrm{mor}}$ specifies what a USD morphism must
+  preserve: carrier, U-face, D-face, boundary witness, and contract data.
+  \item $\kappa_F^{\mathrm{comp}}$ states the closure obligations for
+  $\CComp$, $\DComp$, $\EComp$, $\SComp$, $\TComp$, and $\UComp$.
+  \item $\kappa_F^{\mathrm{erase}}$ prevents unlicensed USD records from
+  yielding USD-free conclusions after erasure.
+  \item $\kappa_F^{\mathrm{desc}}$ records which descent licenses, if any,
+  are available for translating records into base assertions.
+\end{enumerate}
+Thus $\kappa_F$ is not auxiliary prose; it is the contract that makes the
+smart functor safe to reference, transform, compose, erase, and descend.
+\end{definition}
+
+\begin{definition}[Forgetful functor]
+There is a forgetful functor
+\[
+  |-|:\Smart_{\USD}(\mathcal X,\mathcal C)\to [\mathcal X,\mathcal C]
+\]
+which sends
+\[
+  (F,U_F,D_F,\partial_F,\kappa_F)\mapsto F.
+\]
+This is the categorical version of dereferencing the smart functor to its
+pure carrier.
+\end{definition}
+
+\begin{remark}[Why this is not merely gluing two categories]
+The data $\UFib$ and $\DFib$ are not assumed independently and then
+attached to $F$.  They are stance fibers of the single record fibration
+$\pi:\RecUSD\to\St$, and the same records are realized in the carrier
+category by $r:\RecUSD\to\mathcal C$.  Consequently the adoptive and
+non-adoptive faces of a USD functor are stance-lifts over the same pure
+carrier:
+\[
+  q\circ U_F=(F,\underline U),
+  \qquad
+  q\circ D_F=(F,\underline D).
+\]
+The boundary witness $\partial_F$ and coherence contract $\kappa_F$
+therefore relate two readings of one carrier, not two unrelated functors.
+\end{remark}
+
+\begin{definition}[Free and anchored USD functors]
+A free USD functor is a USD functor considered before anchoring it to
+particular entities.  An anchored USD functor is a free USD functor
+equipped with endpoints or a local occurrence context.  We write
+\[
+  \Anch_{a,b}(\mathbb H)=\mathbb H_{a,b}:a\Rightarrow_{\USD}b
+\]
+for anchoring $\mathbb H$ between $a$ and $b$ when the required endpoint
+and boundary data exist.
+\end{definition}
+
+The distinction is essential.  Functions, expressions, programs,
+formulas, and hypotheses may be free USD functors before they touch any
+particular pair of entities.  Entity-to-entity contact is an anchoring of
+an already typed USD functor.
+
+% -----------------------------------------------------------------------------
+\section{Morphisms and the category of USD functors}
+% -----------------------------------------------------------------------------
+
+\begin{definition}[Morphism of USD functors]
+Let
+\[
+  \mathbb H=(F,U_F,D_F,\partial_F,\kappa_F),\qquad
+  \mathbb K=(G,U_G,D_G,\partial_G,\kappa_G)
+\]
+be USD functors from $\mathcal X$ to $\mathcal C$.  A morphism
+$\eta:\mathbb H\to\mathbb K$ consists of:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+  \item a natural transformation $\eta^0:F\Rightarrow G$ of pure carriers;
+  \item a natural transformation $\eta^U:U_F\Rightarrow U_G$ in
+  $[\mathcal X,\RecUSD]$ whose realization is the carrier transformation
+  and whose stance component is fixed:
+  \[
+    q\eta^U=(\eta^0,\mathrm{id}_{\underline U});
+  \]
+  \item a natural transformation $\eta^D:D_F\Rightarrow D_G$ in
+  $[\mathcal X,\RecUSD]$ whose realization is the carrier transformation
+  and whose stance component is fixed:
+  \[
+    q\eta^D=(\eta^0,\mathrm{id}_{\underline D});
+  \]
+  \item compatibility squares showing that $\eta^U$ and $\eta^D$ preserve
+  the boundary data $\partial_F$ and $\partial_G$ over $\eta^0$;
+  \item preservation of the coherence contracts, in particular
+  $\kappa^{\mathrm{lift}}$, $\kappa^{\partial}$, and
+  $\kappa^{\mathrm{erase}}$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Category of USD functors]
+For fixed $\mathcal X$ and $\mathcal C$, USD functors and their morphisms
+form a category, denoted
+\[
+  \Smart_{\USD}(\mathcal X,\mathcal C),
+\]
+provided the total record category admits vertical composition of
+$q$-compatible natural transformations and the coherence contracts are
+closed under identity and composition.
+\end{proposition}
+
+\begin{proof}
+Identities are inherited componentwise from the functor category and the
+record category.  Composition is componentwise and remains compatible
+with $q$ because carrier and stance components compose in
+$\mathcal C\times\St$.  The boundary compatibility and contract
+preservation conditions are stable by the assumed closure of contracts.  The forgetful projection to $[\mathcal X,\mathcal C]$ is
+functorial by construction.
+\end{proof}
+
+This proposition is intentionally modest.  It is not advertised as a deep
+category-theoretic theorem.  It is the sanity check that the reference
+implementation has the shape of a category.
+
+% -----------------------------------------------------------------------------
+\section{The six composition APIs}
+% -----------------------------------------------------------------------------
+
+The following six operations are specified as APIs.  Each operation has a
+mathematical implementation and a natural-language reading.  None is an
+ordinary proof rule for equality, inequality, or physical truth.
+
+\begin{assumption}[Common closure invariant for composition]
+Every composition API below is required to preserve carrier-realized
+stance-lifts.  If the output has carrier $F':\mathcal X'\to\mathcal C$,
+then its output faces must satisfy
+\[
+  q\circ U_{F'}=(F',\underline U),
+  \qquad
+  q\circ D_{F'}=(F',\underline D).
+\]
+This is the operational content of $\kappa^{\mathrm{comp}}$: composition
+may change the carrier, boundary, or indexing shape, but it may not detach
+U-face or D-face records from their carrier realization.
+\end{assumption}
+
+\subsection{C-composition: compression}
+
+\begin{api}[C-composition]
+\textbf{Input.} Two free USD functors
+\[
+  \mathbb H:\mathcal X\to\mathcal C,
+  \qquad
+  \mathbb K:\mathcal Y\to\mathcal C,
+\]
+together with an interface span
+\[
+  \mathcal X\xleftarrow{i}\mathcal I\xrightarrow{j}\mathcal Y
+\]
+and interface compatibility data between $i^*\mathbb H$ and
+$j^*\mathbb K$.
+
+\textbf{Existence condition.} The pushout
+\[
+  \mathcal X\sqcup_{\mathcal I}\mathcal Y
+\]
+exists in $\Cat$, and the carrier and record data glue along the
+interface in a way compatible with $q$.  In particular, the glued U-face
+and D-face must be stance-lifts of the glued carrier.
+
+\textbf{Output.} A free USD functor
+\[
+  \CComp_{\mathcal I}(\mathbb H,\mathbb K):
+  \mathcal X\sqcup_{\mathcal I}\mathcal Y\to\mathcal C.
+\]
+\end{api}
+
+Mathematically, C-composition is gluing or compression by a pushout of
+domains plus compatible gluing of the carrier, adoptive face,
+non-adoptive face, and boundary witness.  It compresses two freely
+available USD functors into one referenceable USD functor.  It does not
+assert that the two inputs were identical; the joint boundary record
+retains the old boundary data and the new interface discrepancy.
+
+A minimal boundary policy is
+\[
+  \partial_{\CComp(\mathbb H,\mathbb K)}
+  =
+  \partial_{\mathbb H}\oplus
+  \partial_{\mathbb K}\oplus
+  \Delta_{\mathcal I}(\mathbb H,\mathbb K),
+\]
+where $\Delta_{\mathcal I}$ is the interface discrepancy supplied by the
+model.
+
+\subsection{D-composition: downward restriction}
+
+\begin{api}[D-composition]
+\textbf{Input.} A context morphism
+\[
+  \rho:\mathcal L\to\mathcal G
+\]
+and a USD functor over the global context $\mathcal G$.
+
+\textbf{Mathematical implementation.} D-composition is reindexing or
+pullback:
+\[
+  \DComp_{\rho}=\rho^*:
+  \Smart_{\USD}(\mathcal G,\mathcal C)\to
+  \Smart_{\USD}(\mathcal L,\mathcal C).
+\]
+
+\textbf{Output.} A local USD functor $\rho^*\mathbb H$.
+
+\textbf{Lift condition.} If $\mathbb H$ has carrier $F$, then the output
+has carrier $\rho^*F$, and its faces are the reindexed stance-lifts
+satisfying
+\[
+  q(\rho^*U_F)=(\rho^*F,\underline U),
+  \qquad
+  q(\rho^*D_F)=(\rho^*F,\underline D).
+\]
+\end{api}
+
+The natural-language reading is: a large observed USD functor is lowered
+to a local context.  The operation is not a proof that the local context
+satisfies the global claim.  It is the typed act of reading the global
+record through a local index.
+
+\subsection{E-composition: extension by a cut vertex}
+
+\begin{api}[E-composition]
+\textbf{Input.} An anchored USD functor
+\[
+  \mathbb H_{a,b}:a\Rightarrow_{\USD}b
+\]
+and a proposed cut vertex $m$.
+
+\textbf{Existence condition.} There is factorization data in the relevant
+arrow category, together with a comparison 2-cell
+\[
+  \varepsilon_m:
+  \mathbb H_{a,m}\circ \mathbb H_{m,b}
+  \Rightarrow
+  \mathbb H_{a,b}
+\]
+or the reverse comparison, depending on the model.
+
+\textbf{Output.} A subdivided anchored record
+\[
+  \EComp_m(\mathbb H_{a,b})
+  =
+  (\mathbb H_{a,m},\mathbb H_{m,b};\varepsilon_m).
+\]
+\end{api}
+
+E-composition extends one anchored USD functor by adding an internal
+observation point.  It should be read as subdivision or refinement, not as
+a proof that the original record is strictly equal to the composite.
+
+\subsection{S-composition: sideways shared stabilization}
+
+S-composition is the operation most in need of explicit existence
+conditions.  We therefore specify the gap space before defining the
+operation.
+
+\begin{assumption}[Gap lattice]
+For a pair of compatible USD functors $\mathbb H,\mathbb K$, assume a
+complete lattice
+\[
+  \Lambda_{\mathbb H,\mathbb K}
+\]
+of possible gap values.  The order $\leq$ means ``no more discrepant
+than'' or any chosen model-specific refinement order.
+\end{assumption}
+
+\begin{assumption}[Gap update]
+A sideways interaction supplies a monotone update map
+\[
+  \Phi_{\mathbb H,\mathbb K}:
+  \Lambda_{\mathbb H,\mathbb K}\to
+  \Lambda_{\mathbb H,\mathbb K}.
+\]
+The value $\Phi(\Delta)$ is the new discrepancy after both sides have
+incorporated the current discrepancy into their non-adoptive records.
+\end{assumption}
+
+\begin{api}[S-composition]
+\textbf{Input.} A pair of compatible USD functors $\mathbb H,\mathbb K$
+and a monotone gap update map $\Phi_{\mathbb H,\mathbb K}$ on a complete
+lattice of gaps.
+
+\textbf{Existence condition.} A fixed point
+\[
+  \Delta^*=\Phi_{\mathbb H,\mathbb K}(\Delta^*)
+\]
+is selected.  Existence follows, for example, from the
+Knaster-Tarski fixed point theorem when the stated monotonicity and
+completeness conditions hold.
+
+\textbf{Output.} A sideways stabilized USD record
+\[
+  \SComp(\mathbb H,\mathbb K;\Delta^*).
+\]
+\end{api}
+
+Natural-language reading: two USD functors do not eliminate their gap.
+They update their non-adoptive faces until the same gap is shared as a
+stable discrepancy.  The completion condition is not $\Delta^*=0$ but
+shared stability.
+
+\subsection{T-composition: temporal turnover}
+
+\begin{definition}[Sequence category]
+Let $\Seq(\Smart_{\USD})$ be the category of finite composable sequences
+of USD functors.  An object is a finite chain
+\[
+  \mathcal H=(\mathbb H_1,\ldots,\mathbb H_n).
+\]
+\end{definition}
+
+\begin{definition}[U/D flip]
+Assume that the stance involution $\tau:\St\to\St$ lifts to a
+carrier-preserving record involution
+\[
+  \bar\tau:\RecUSD\to\RecUSD,
+  \qquad
+  r\bar\tau=r,
+  \qquad
+  \pi\bar\tau=\tau\pi.
+\]
+The induced operation
+\[
+  \Flip_{U,D}:\Smart_{\USD}\to\Smart_{\USD}
+\]
+sends
+\[
+  (F,U_F,D_F,\partial_F,\kappa_F)
+  \mapsto
+  (F,\bar\tau D_F,\bar\tau U_F,\partial_F^\tau,\kappa_F^\tau).
+\]
+The pure carrier is not altered.  The lifted faces satisfy
+\[
+  q(\bar\tau D_F)=(F,\underline U),
+  \qquad
+  q(\bar\tau U_F)=(F,\underline D),
+\]
+so T-composition turns the record upside down without touching the
+realized carrier.
+\end{definition}
+
+\begin{api}[T-composition]
+\textbf{Input.} A finite USD functor chain
+\[
+  \mathcal H=(\mathbb H_1,\ldots,\mathbb H_n).
+\]
+
+\textbf{Mathematical implementation.}
+\[
+  \TComp(\mathcal H)
+  \defeq
+  \Rev\bigl(\Flip_{U,D}(\mathbb H_1),\ldots,
+             \Flip_{U,D}(\mathbb H_n)\bigr),
+\]
+so that
+\[
+  \TComp(\mathcal H)
+  =
+  (\mathbb H_n^\tau,\ldots,\mathbb H_1^\tau).
+\]
+
+\textbf{Output.} A temporally turned-over USD record chain.
+\end{api}
+
+T-composition touches no entity.  It reverses the order of the record
+chain and applies the carrier-preserving stance turnover to every adoptive
+and non-adoptive face.  A chain that was read forward as an identification
+proposal may be re-read backward as a non-adoption record, but this is a
+transformation of records, not a proof of ordinary inequality.
+
+If no information is lost, $\TComp$ is involutive up to record
+equivalence:
+\[
+  \TComp^2\cong 1.
+\]
+If compression, stabilization, or descent has discarded information, the
+weaker USD-level comparison
+\[
+  \TComp^2(\mathcal H)\uconn \mathcal H
+\]
+may be all that remains.
+
+\subsection{U-composition: upward image}
+
+D-composition has two common adjoints when the relevant Kan extensions
+exist.  We keep the existential and universal readings separate.
+
+\begin{api}[U-composition]
+Let $\rho:\mathcal L\to\mathcal G$ be a context morphism.
+
+\textbf{Existential upward composition.}
+When the left Kan extension exists, define
+\[
+  \UComp^{\exists}_{\rho}
+  \defeq
+  \Sigma_\rho
+  \defeq
+  \Lan_{\rho}:
+  \Smart_{\USD}(\mathcal L,\mathcal C)\to
+  \Smart_{\USD}(\mathcal G,\mathcal C).
+\]
+Then
+\[
+  \Sigma_\rho\dashv \rho^*.
+\]
+
+\textbf{Universal upward composition.}
+When the right Kan extension exists, define
+\[
+  \UComp^{\forall}_{\rho}
+  \defeq
+  \Pi_\rho
+  \defeq
+  \Ran_{\rho}:
+  \Smart_{\USD}(\mathcal L,\mathcal C)\to
+  \Smart_{\USD}(\mathcal G,\mathcal C).
+\]
+Then
+\[
+  \rho^*\dashv \Pi_\rho.
+\]
+
+\textbf{Smart-lift condition.} These Kan extensions are admitted as
+U-compositions only when they lift from the pure carrier category to
+$\Smart_{\USD}$.  For example, if
+$\Sigma_\rho\mathbb H$ has carrier $\Lan_\rho F$, then its faces must be
+records over that carrier:
+\[
+  q\circ U_{\Lan_\rho F}=(\Lan_\rho F,\underline U),
+  \qquad
+  q\circ D_{\Lan_\rho F}=(\Lan_\rho F,\underline D),
+\]
+and similarly for $\Pi_\rho$ and $\Ran_\rho F$.  The existence of the
+ordinary Kan extension of $F$ is therefore not enough; the USD record and
+contract data must lift with it.
+\end{api}
+
+If these lifted Kan extensions do not exist, the relevant U-composition is
+undefined in the smart category even when the carrier Kan extension exists.
+
+The natural-language reading is that a local USD functor is pushed upward
+as a global candidate record.  The existential version says that some
+local contribution is imaged globally; the universal version says that a
+local condition is extended as a global constraint when possible.
+
+\subsection{C-D-E and S-T-U reading order}
+
+The six operations have two useful reading sequences:
+\[
+  \CComp\longrightarrow\DComp\longrightarrow\EComp
+\]
+and
+\[
+  \SComp\longrightarrow\TComp\longrightarrow\UComp.
+\]
+The first sequence compresses free records, lowers them, and subdivides
+anchored local records.  The second stabilizes a shared gap, turns the
+record chain upside down, and then images the result upward.
+
+% -----------------------------------------------------------------------------
+\section{A syntactic reference implementation}
+% -----------------------------------------------------------------------------
+
+This section records the minimum syntax needed for a conservative USD
+calculus.  It is intentionally austere.
+
+\begin{definition}[Base language]
+Let $\mathcal L_0$ be a base formal language with judgments
+\[
+  \Gamma\vdash_0 A.
+\]
+The base language may be first-order logic, type theory, an internal
+language of a category, or another fixed formal system.
+\end{definition}
+
+\begin{definition}[USD extension]
+The USD calculus $\USDCalc$ extends $\mathcal L_0$ with record terms:
+\[
+  \mathrm{conn}(x,y;r,\beta),
+  \qquad
+  \mathrm{nonadopt}(x,y;r,\beta),
+  \qquad
+  \mathrm{hand}(F,U,D,\partial,\kappa),
+\]
+and with record-forming operations
+\[
+  \CComp,
+  \DComp,
+  \EComp,
+  \SComp,
+  \TComp,
+  \UComp.
+\]
+The USD extension does not add a base rule allowing a record term alone to
+prove a USD-free formula.
+\end{definition}
+
+\begin{definition}[Descent license]
+A descent license is an explicit rule instance
+\[
+  \IdLic(R,A)
+\]
+that permits a USD record $R$ to be translated into a base assertion $A$
+in $\mathcal L_0$.  Examples include a definition, an isomorphism, a
+proved equivalence, a semantic interpretation, or a verified coercion.
+\end{definition}
+
+\begin{definition}[Erasure]
+The erasure translation
+\[
+  |-|:\USDCalc\to\mathcal L_0
+\]
+acts as identity on base terms and formulas and removes pure USD records
+unless a descent license supplies a base formula.
+\end{definition}
+
+\begin{theorem}[Conservative design theorem]
+Assume that every USD inference rule is record-forming, record-transforming,
+or explicitly licensed by a descent rule.  If
+\[
+  \Gamma\vdash_{\USDCalc} A
+\]
+and $A$ is USD-free, then the derivation of $A$ uses only base rules and
+licensed descents.  Consequently
+\[
+  |\Gamma|\vdash_0 A
+\]
+provided each used descent license is valid in the base system.
+\end{theorem}
+
+\begin{proof}
+By induction on the given derivation.  Base rules translate to base rules.
+Record-forming and record-transforming USD rules have USD-record
+conclusions and therefore cannot be the final step of a USD-free formula.
+If a USD record is used to produce a USD-free conclusion, the rule must be
+a licensed descent by hypothesis; replacing that step with its base
+license yields a derivation in $\mathcal L_0$.  The induction removes all
+unlicensed USD bookkeeping from the derivation of $A$.
+\end{proof}
+
+This theorem is deliberately conditional.  It states the safety contract
+of the reference implementation.  A stronger metatheorem for a particular
+formal calculus would require a fully specified proof system, but this
+condition is already enough to prevent USD records from acting as hidden
+proof rules.
+
+% -----------------------------------------------------------------------------
+\section{Worked toy model}
+% -----------------------------------------------------------------------------
+
+\begin{example}[Poset record model]
+Let $\mathcal C$ be a poset regarded as a category.  Let
+\[
+  \Rel_{\mathcal C}(a,b)
+\]
+be the truth value of $a\leq b$.  Let $\BVis$ select those comparable
+pairs for which a chosen boundary label is present.  Let $\RecUSD$ be the
+product category
+\[
+  \mathcal C\times\St
+\]
+with projection to $\St$.  The realization projection is
+\[
+  r=\operatorname{pr}_{\mathcal C}:\mathcal C\times\St\to\mathcal C,
+\]
+so the combined projection is
+\[
+  q=(r,\pi):\mathcal C\times\St\to\mathcal C\times\St,
+\]
+the identity in this minimal model.  Then
+$\UFib\cong\mathcal C\cong\DFib$, but the two copies are distinguished as
+fibers.  A USD functor is a functor $F$ together with two stance-lifted
+copies $U_F,D_F$ over the same $F$ and a boundary label.  In this model
+D-composition is ordinary reindexing of monotone maps, C-composition is
+pushout of indexing posets when it exists, and T-composition swaps the
+two copies and reverses a finite chain while preserving realization.
+\end{example}
+
+\begin{example}[Complete lattice gap model]
+Let the gap lattice be a complete lattice $\Lambda$.  If a sideways
+interaction gives a monotone map $\Phi:\Lambda\to\Lambda$, then the set
+of fixed points is nonempty by the Knaster-Tarski theorem.  Choosing the
+least fixed point gives a canonical minimal shared discrepancy.  Choosing
+the greatest fixed point gives a maximal conservative discrepancy.  The
+choice is part of the model policy.
+\end{example}
+
+% -----------------------------------------------------------------------------
+\section{Relativistic test model}
+% -----------------------------------------------------------------------------
+
+The relativistic material is not an application claiming new physics.  It
+is a test model for the USD vocabulary because relativity naturally
+involves observers, frames, local restrictions, and time-oriented records.
+The historical sources are Einstein's 1905 paper on special relativity
+and his 1916 paper on general relativity \cite{Einstein1905,Einstein1916}.
+
+\begin{definition}[Lorentzian test base]
+Let $(M,g)$ be a Lorentzian manifold.  Let $\mathcal O(M,g)$ be a chosen
+category of local observers or frames.  A morphism in $\mathcal O(M,g)$
+may be a change of frame, inclusion of a local chart, or another chosen
+admissible comparison of observations.
+\end{definition}
+
+\begin{example}[D-composition as local restriction]
+A global geometric record, such as a metric-dependent record on $(M,g)$,
+may be lowered along a local frame map
+\[
+  \rho:O\to M
+\]
+by pullback:
+\[
+  \DComp_{\rho}(\mathbb H)=\rho^*\mathbb H.
+\]
+This is the familiar mathematical shape of restricting global data to a
+local observer or frame.  The USD interpretation only adds adoptive and
+non-adoptive record faces and boundary witnesses.
+\end{example}
+
+\begin{example}[T-composition as record turnover]
+A time-oriented chain of observation records may be transformed by
+$\TComp$ into the reverse-order chain with U and D faces exchanged.  This
+is not asserted to be physical time reversal symmetry.  It is a record
+operation that leaves the entities and geometric carrier untouched while
+turning the USD bookkeeping upside down.
+\end{example}
+
+\begin{remark}[No hidden physics]
+If a model uses Lorentz transformations, connections, curvature, or field
+equations, those structures must be explicitly included in the base
+category or in the relation witness profunctor.  USD functors do not
+supply them automatically.
+\end{remark}
+
+% -----------------------------------------------------------------------------
+\section{Reviewer-facing checklist}
+% -----------------------------------------------------------------------------
+
+For reference, the implementation satisfies the following design checks.
+
+\begin{enumerate}[leftmargin=*]
+  \item The context parameter is a category $\mathcal P$, not a bare set.
+  \item Situated occurrences are defined by a Grothendieck construction.
+  \item $\Rel$ is a poset-valued profunctor or indexed predicate.
+  \item $\BVis$ is a typed substructure of $\Rel$.
+  \item $\UFib$ and $\DFib$ are fibers of one fibration
+  $\RecUSD\to\St$, and every record is also realized by
+  $r:\RecUSD\to\mathcal C$.
+  \item The combined projection $q=(r,\pi):\RecUSD\to\mathcal C\times\St$
+  makes U- and D-faces stance-lifts over one carrier.
+  \item A USD functor is a tuple
+  $(F,U_F,D_F,\partial_F,\kappa_F)$ where $U_F$ and $D_F$ satisfy
+  $q\circ U_F=(F,\underline U)$ and $q\circ D_F=(F,\underline D)$.
+  \item The coherence contract $\kappa_F$ is an explicit bundle of lift,
+  boundary, morphism, composition, erasure, and descent obligations.
+  \item C/D/E/S/T/U operations have stated input types, outputs, and
+  existence conditions.
+  \item S-composition depends on a complete lattice and a monotone update
+  map, so fixed-point existence is not merely asserted.
+  \item T-composition is sequence reversal plus a carrier-preserving U/D
+  involution and does not touch entities or carrier realization.
+  \item USD-free conclusions require base reasoning or an explicit
+  descent license.
+\end{enumerate}
+
+% -----------------------------------------------------------------------------
+\section{Open problems}
+% -----------------------------------------------------------------------------
+
+The present draft is a reference implementation rather than a final
+metatheory.  The main open problems are:
+\begin{enumerate}[leftmargin=*]
+  \item Refine preferred subclasses of coherence contracts $\kappa_F$ and
+  prove closure under all six composition APIs in nontrivial models.
+  \item Compare the carrier-realized USD record fibration with displayed categories,
+  double categories, fibrations of proofs, and decorated functors.
+  \item Give a fully formal sequent calculus or type theory for
+  $\USDCalc$ and prove a cut-elimination or model-theoretic conservativity
+  theorem.
+  \item Identify useful model policies for selecting fixed points in
+  S-composition.
+  \item Develop lax stance-lift variants where $q\circ U_F$ and $q\circ D_F$ compare to
+  $(F,\underline U)$ and $(F,\underline D)$ rather than strictly equal them.
+  \item Develop nontrivial test models beyond the poset and relativistic
+  sketches.
+\end{enumerate}
+
+% -----------------------------------------------------------------------------
+\section{Conclusion}
+% -----------------------------------------------------------------------------
+
+The central correction in this draft is that USD Functor Theory should be
+read as a specification of smart functors, not as a metaphorical use of
+category theory.  A USD functor is an ordinary functor with additional
+record fields: adoptive face, non-adoptive face, boundary witness, and
+coherence contract.  The U and D regions are fibers of one stance-indexed
+record fibration, and the faces are stance-lifts realized over the same
+carrier by
+\[
+  q=(r,\pi):\RecUSD\to\mathcal C\times\St.
+\]
+The six composition operations are typed APIs backed by ordinary categorical
+constructions or explicit existence assumptions, and each operation is
+defined only when it preserves the stance-lift invariant through $q$.  The
+resulting system can guide interpretation and proof search while remaining
+conservative over the base language for USD-free conclusions.
+
+\begin{thebibliography}{9}
+
+\bibitem{MacLane1971}
+Saunders Mac Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 1971.
+
+\bibitem{Borceux1994}
+Francis Borceux.
+\newblock \emph{Handbook of Categorical Algebra, Volumes 1--3}.
+\newblock Cambridge University Press, 1994.
+
+\bibitem{Johnstone2002}
+Peter T. Johnstone.
+\newblock \emph{Sketches of an Elephant: A Topos Theory Compendium}.
+\newblock Oxford University Press, 2002.
+
+\bibitem{GrothendieckSGA1}
+Alexander Grothendieck.
+\newblock Rev\^etements \`etales et groupe fondamental.
+\newblock In \emph{SGA 1}, Lecture Notes in Mathematics 224, Springer, 1971.
+
+\bibitem{Tarski1955}
+Alfred Tarski.
+\newblock A lattice-theoretical fixpoint theorem and its applications.
+\newblock \emph{Pacific Journal of Mathematics}, 5(2):285--309, 1955.
+
+\bibitem{Einstein1905}
+Albert Einstein.
+\newblock Zur Elektrodynamik bewegter K\"orper.
+\newblock \emph{Annalen der Physik}, 322(10):891--921, 1905.
+
+\bibitem{Einstein1916}
+Albert Einstein.
+\newblock Die Grundlage der allgemeinen Relativit\"atstheorie.
+\newblock \emph{Annalen der Physik}, 354(7):769--822, 1916.
+
+\end{thebibliography}
+
+\end{document}
