@@ -1448,34 +1448,216 @@ A USD functor into $`\mathcal C_{\mathcal S,\mathcal E}`$ records a joint social
 
 The pseudonymous creator of Bitcoin gives a useful interdisciplinary test case. The Bitcoin white paper presents the system as peer-to-peer electronic cash without reliance on a trusted third party . Late in 2010, Satoshi Nakamoto publicly warned that Bitcoin was still a small beta community and that sudden WikiLeaks-driven attention could bring destructive heat . The following day, Satoshi also described denial-of-service resistance as unfinished work . Separately, claims that Satoshi or a dominant early miner controlled about one million bitcoins depend on chain-analysis heuristics; the evidence is suggestive but not as robust as popular retellings often imply .
 
-Let $`\mathcal A`$ be a small category of possible founder actions: revealing an identity, exercising founder authority, moving early coins, transferring control, remaining pseudonymous, or withdrawing from public control. A Satoshi test record is a USD functor
+The source data are kept in two different categories. The sociological side records legitimacy, founder authority, regulatory visibility, community dependence, and governance centrality. The economic side records early coin concentration, liquidity, expected sell-pressure signals, scarcity belief, and market confidence. The test is not licensed to derive an economic conclusion directly from a sociological one, or a sociological intention directly from an economic trace.
+
+Let $`\mathcal A_{\mathcal S}`$ be a small category of sociological founder actions: revealing an identity, exercising founder authority, transferring control, remaining pseudonymous, or withdrawing from public control. Let $`\mathcal A_{\mathcal E}`$ be a small category of economic founder actions: moving early coins, not moving early coins, distributing control, signalling sale, or remaining economically inactive. These categories are not identified. They touch only through a boundary-visible interface.
+
+**D0-step.** Begin with broad sociological and economic USD records $`\mathbb H_{\mathcal S}^{0}`$ and $`\mathbb H_{\mathcal E}^{0}`$. Let
 
 ```math
-\mathbb H_{\mathrm{Sat}}:
-  \mathcal A\to\mathcal C_{\mathcal S,\mathcal E}
+\rho_{\mathcal S}^{0}:
+  \mathcal A_{\mathcal S}\to\mathcal G_{\mathcal S},
+  \qquad
+  \rho_{\mathcal E}^{0}:
+  \mathcal A_{\mathcal E}\to\mathcal G_{\mathcal E}
 ```
 
-whose social projection records effects such as legitimacy, founder authority, regulatory visibility, community dependence, and governance centrality, and whose economic projection records effects such as early coin concentration, liquidity, expected sell pressure, scarcity belief, and market confidence.
+be context morphisms selecting only founder-action data from broader social and economic contexts. The first downward restriction is
 
-In this model, the adoptive face of a withdrawal record may contain the features that support decentralized adoption:
+```math
+\mathbb H_{\mathcal S}^{f}
+  \mathrel{:=}
+  \mathsf{DComp}_{\rho_{\mathcal S}^{0}}(\mathbb H_{\mathcal S}^{0}),
+  \qquad
+  \mathbb H_{\mathcal E}^{f}
+  \mathrel{:=}
+  \mathsf{DComp}_{\rho_{\mathcal E}^{0}}(\mathbb H_{\mathcal E}^{0}).
+```
+
+This step does not select withdrawal as the answer. It only removes material outside the founder-action comparison class.
+
+**C-step.** The social and economic records are read together only inside the interdisciplinary carrier $`\mathcal C_{\mathcal S,\mathcal E}`$. Before applying compression, assume the model supplies typed carrier lifts
+
+```math
+\widehat{\mathbb H}_{\mathcal S}^{f}:
+  \mathcal A_{\mathcal S}\to \mathcal C_{\mathcal S,\mathcal E},
+  \qquad
+  \widehat{\mathbb H}_{\mathcal E}^{f}:
+  \mathcal A_{\mathcal E}\to \mathcal C_{\mathcal S,\mathcal E}
+```
+
+whose projections recover the restricted social and economic records:
+
+```math
+p_{\mathcal S}\circ\widehat{\mathbb H}_{\mathcal S}^{f}
+  =
+  \mathbb H_{\mathcal S}^{f},
+  \qquad
+  p_{\mathcal E}\circ\widehat{\mathbb H}_{\mathcal E}^{f}
+  =
+  \mathbb H_{\mathcal E}^{f}.
+```
+
+The unused projections are bookkeeping fields supplied by the model, not licenses for cross-disciplinary descent. Let
+
+```math
+\Theta_{\mathrm{Sat}}:
+  \mathcal A_{\mathcal S}^{\mathrm{op}}\times\mathcal A_{\mathcal E}
+  \to \mathbf{Pos}
+```
+
+be an interface profunctor. An element
+
+```math
+\theta\in\Theta_{\mathrm{Sat}}(s,e)
+```
+
+witnesses that a social founder action $`s`$ and an economic founder action $`e`$ are two boundary-visible readings of the same founder episode, such as public identity, authority, early coin movement, non-movement, market signal, or community dependence. Let
+
+```math
+\mathcal I_{\mathrm{Sat}}
+  \mathrel{:=}
+  \int_{\mathcal A_{\mathcal S}^{\mathrm{op}}\times\mathcal A_{\mathcal E}}
+  \Theta_{\mathrm{Sat}}.
+```
+
+Compression along this interface gives the joint record
+
+```math
+\mathbb J_{\mathrm{Sat}}
+  \mathrel{:=}
+  \mathsf{CComp}_{\mathcal I_{\mathrm{Sat}}}
+  (\widehat{\mathbb H}_{\mathcal S}^{f},
+   \widehat{\mathbb H}_{\mathcal E}^{f}).
+```
+
+The compression does not say that social authority is an economic price, or that economic non-movement is a social intention. It records only the typed interface through which both projections become visible in the same interdisciplinary carrier.
+
+**D1-step.** Now restrict the compressed record to the local Satoshi context. Let
+
+```math
+\rho_{\mathrm{Sat}}:
+  \mathcal L_{\mathrm{Sat}}
+  \to
+  \mathcal A_{\mathcal S}\sqcup_{\mathcal I_{\mathrm{Sat}}}
+  \mathcal A_{\mathcal E}
+```
+
+select the local span generated by pseudonymity, public withdrawal, non-exercise of founder authority, early coin non-movement, and the visible decentralization signal. Define
+
+```math
+\mathbb L_{\mathrm{Sat}}
+  \mathrel{:=}
+  \mathsf{DComp}_{\rho_{\mathrm{Sat}}}(\mathbb J_{\mathrm{Sat}}).
+```
+
+This second downward restriction is local reading, not historical descent. It does not infer the inner intention, the identity, or the key status of Satoshi.
+
+**E-step.** Anchor the local record between an initial founder-action state $`a_0`$ and a decentralization-signal state $`a_1`$:
+
+```math
+\mathbb L_{\mathrm{Sat},a_0,a_1}:a_0\Rightarrow_{\mathsf{USD}}a_1.
+```
+
+Insert the following cut vertices by iterated E-composition:
+
+```math
+\begin{aligned}
+  m_{\mathrm{id}} &= \text{public identity visibility},\\
+  m_{\mathrm{auth}} &= \text{founder authority},\\
+  m_{\mathrm{coin}} &= \text{early coin movement or non-movement},\\
+  m_{\mathrm{sell}} &= \text{large sell-pressure signal}.
+\end{aligned}
+```
+
+Thus
+
+```math
+\mathbb E_{\mathrm{Sat}}
+  \mathrel{:=}
+  \mathsf{EComp}_{m_{\mathrm{sell}}}
+  \mathsf{EComp}_{m_{\mathrm{coin}}}
+  \mathsf{EComp}_{m_{\mathrm{auth}}}
+  \mathsf{EComp}_{m_{\mathrm{id}}}
+  (\mathbb L_{\mathrm{Sat},a_0,a_1}).
+```
+
+The first two cuts are sociological: they concern visibility, authority, central target formation, and community dependence. The last two cuts are economic: they concern coin movement and sell-pressure signals. The factorization is deliberately conservative; it prevents the record from jumping directly from withdrawal to decentralization or from coin non-movement to personal intention.
+
+**S-step.** The sideways stabilization is the core of the Satoshi test. Let $`\Lambda_{\mathrm{Sat}}`$ be a complete lattice of discrepancies between decentralization-supporting outputs and non-adopted founder residue, and let
+
+```math
+\Phi_{\mathrm{Sat}}:
+  \Lambda_{\mathrm{Sat}}\to\Lambda_{\mathrm{Sat}}
+```
+
+be the monotone update map supplied by the model. Choose a fixed point
+
+```math
+\Delta_{\mathrm{Sat}}^*
+  =
+  \Phi_{\mathrm{Sat}}(\Delta_{\mathrm{Sat}}^*).
+```
+
+The adoptive face is a product reading
 
 ```math
 U_{\mathrm{decent}}
   =
-  \{\text{reduced founder authority, reduced central target,
-    reduced sell-pressure signal}\}.
+  (U_{\mathcal S},U_{\mathcal E}),
 ```
 
-The non-adoptive face records what is not taken up by the main output:
+where
+
+```math
+\begin{aligned}
+  U_{\mathcal S}
+  &=
+  \{\text{reduced founder authority, reduced central target,
+    reduced community dependence}\},\\
+  U_{\mathcal E}
+  &=
+  \{\text{reduced large-sell signal, reduced direct founder-liquidity
+    pressure}\}.
+\end{aligned}
+```
+
+The non-adoptive face is likewise a product reading
 
 ```math
 D_{\mathrm{fame/wealth}}
   =
-  \{\text{public fame, founder control, direct realization of early
-    coin wealth}\}.
+  (D_{\mathcal S},D_{\mathcal E}),
 ```
 
-The relevant boundary-visible relation may be written schematically as
+where
+
+```math
+\begin{aligned}
+  D_{\mathcal S}
+  &=
+  \{\text{public fame, founder control, proved inner intention}\},\\
+  D_{\mathcal E}
+  &=
+  \{\text{direct realization of early coin wealth, exact status of
+    early coins}\}.
+\end{aligned}
+```
+
+Let $`A_{\mathrm{decent}}`$ be the decentralization-support record whose adoptive face is $`U_{\mathrm{decent}}`$, and let $`B_{\mathrm{residue}}`$ be the founder-residue record whose non-adoptive face is $`D_{\mathrm{fame/wealth}}`$. The stabilized record is
+
+```math
+\mathrm{SMol}_{\mathrm{Sat}}
+  \mathrel{:=}
+  \mathsf{SComp}(A_{\mathrm{decent}},B_{\mathrm{residue}};
+   \Delta_{\mathrm{Sat}}^*)
+  =
+  \mathrm{SMol}
+  (A_{\mathrm{decent}},B_{\mathrm{residue}};
+   \Delta_{\mathrm{Sat}}^*).
+```
+
+At the visible boundary,
 
 ```math
 U_{\mathrm{decent}}
@@ -1483,12 +1665,14 @@ U_{\mathrm{decent}}
   D_{\mathrm{fame/wealth}}.
 ```
 
-This does not say that fame and wealth were morally rejected, nor that a particular person had a proved intention. It says that, in the joint social-economic carrier, decentralized adoption can be modeled as boundary-visible only when founder fame, founder control, and direct realization of early coin wealth remain non-adopted residue.
+This says that decentralized adoption can be modeled as stable only while public fame, founder control, direct realization of early coin wealth, proved intention, and exact early-coin status remain non-adopted residue. It does not say that fame or wealth were morally rejected, and it does not prove who Satoshi was.
 
-A conservative best-effort policy can be expressed by assigning each action $`a\in\mathcal A`$ a social cost and an economic cost,
+A conservative best-effort policy can be expressed by assigning each compatible local action $`a\in\mathcal L_{\mathrm{Sat}}`$ a social cost and an economic cost,
 
 ```math
-C_{\mathcal S}(a),\qquad C_{\mathcal E}(a),
+C_{\mathcal S}(a),
+  \qquad
+  C_{\mathcal E}(a),
 ```
 
 and selecting an action whose worst visible cost is minimal:
@@ -1496,11 +1680,49 @@ and selecting an action whose worst visible cost is minimal:
 ```math
 a^*
   \in
-  \operatorname*{arg\,min}_{a\in\mathcal A}
+  \operatorname*{arg\,min}_{a\in\mathcal L_{\mathrm{Sat}}}
   \max\{C_{\mathcal S}(a),C_{\mathcal E}(a)\}.
 ```
 
-Under one plausible policy, withdrawal together with non-movement of the early coins is a candidate for $`a^*`$. It reduces the social risk of a founder becoming a central authority or legal target and reduces the economic risk of a large sell-pressure signal. The loss is not erased: the abandoned fame, unresolved identity, and unrealized wealth remain as self-anchored residue attached to the record.
+Under one plausible policy, withdrawal together with non-movement of early coins is a candidate for $`a^*`$. The social reading is reduced founder centrality and reduced central target formation. The economic reading is the absence of a large direct sell-pressure signal. The loss is not erased: abandoned fame, unresolved identity, founder control, direct realization of early wealth, and exact early-coin status remain attached as self-anchored residue.
+
+**T-step.** Let $`\mathcal H_{\mathrm{Sat}}`$ be the finite subdivided record chain underlying $`\mathbb E_{\mathrm{Sat}}`$ and $`\mathrm{SMol}_{\mathrm{Sat}}`$. Temporal turnover gives
+
+```math
+\mathbb T_{\mathrm{Sat}}
+  \mathrel{:=}
+  \mathsf{TComp}(\mathcal H_{\mathrm{Sat}}).
+```
+
+Forward, the record reads:
+
+```math
+\text{founder withdrawal and early-coin non-movement}
+  \longrightarrow
+  \text{decentralization-supporting signal}.
+```
+
+Turned over, it reads:
+
+```math
+\text{decentralized Bitcoin record}
+  \longrightarrow
+  \text{founder fame, control, wealth, identity, and intention as residue}.
+```
+
+This reversal blocks a common overreading. The present decentralized record may be read as carrying founder-residue, but it does not reveal the founder’s private reason for withdrawing or not moving coins.
+
+**U-step.** Finally, when the relevant lifted Kan extension exists, image the turned local record upward along $`\rho_{\mathrm{Sat}}`$:
+
+```math
+\mathbb U_{\mathrm{Sat}}
+  \mathrel{:=}
+  \mathsf{UComp}^{\exists}_{\rho_{\mathrm{Sat}}}(\mathbb T_{\mathrm{Sat}})
+  \leadsto
+  \mathrm{FounderExitAsDecentralizationStabilizer}.
+```
+
+The upward image is a general schema, not a biographical claim. It says that, in projects where a founder has strong initial authority and a large visible economic position, public withdrawal, non-exercise of authority, and non-movement of large early holdings can stabilize a decentralization record, provided the fame, control, wealth, identity, and intention that are not adopted by the main output remain recorded as residue.
 
 <div class="remark">
 
