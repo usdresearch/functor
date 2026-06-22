@@ -1340,6 +1340,142 @@ category or in the relation witness profunctor.  USD functors do not
 supply them automatically.
 \end{remark}
 
+\subsection{Newton-Einstein test}
+
+The Newton-Einstein test uses E-composition as its main operation.  The
+test does not claim that Einstein proved Newtonian absolute time false by
+one direct replacement.  It records a two-stage theoretical operation:
+Newton's single global time parameter is first decomposed inside special
+relativity and then extended through local inertial structure into
+general relativity.  The relevant historical base texts are Newton's
+\emph{Principia}, Einstein's 1905 paper on special relativity, and
+Einstein's 1916 paper on general relativity
+\cite{Newton1687,Einstein1905,Einstein1916}.
+
+Let
+\[
+  \mathcal N_{\mathrm{mech}},
+  \qquad
+  \mathcal S_{\mathrm{rel}},
+  \qquad
+  \mathcal G_{\mathrm{rel}}
+\]
+denote schematic categories of Newtonian mechanics, special relativity,
+and general relativity.  A Newtonian time record may be written
+\[
+  \mathbb N_T:a\Rightarrow_{\USD} b,
+\]
+where an event configuration is assigned to a single frame-independent
+temporal order.  In the Newtonian record, simultaneity and duration are
+treated as globally available, and the time coordinate is not produced by
+a synchronization protocol internal to the theory.
+
+The coarse E-composition flow is
+\[
+  \mathbb N_T
+  \xrightarrow{\EComp_{\mathcal S_{\mathrm{rel}}}}
+  \mathbb E_{\mathrm{SR}}
+  \xrightarrow{\EComp_{\mathcal G_{\mathrm{rel}}}}
+  \mathbb E_{\mathrm{GR}}.
+\]
+Thus special relativity is not skipped.  It is the first cut vertex
+through which the Newtonian record is factored before the general
+relativistic record is formed.
+
+\textbf{First E-step: Newton to special relativity.}  The cut vertex
+$m_{\mathrm{SR}}$ is itself resolved into smaller cuts:
+\[
+\begin{aligned}
+  \mathbb N_T
+  &\xrightarrow{\EComp_{\mathrm{clock}}}
+  \text{local clock readings}\\
+  &\xrightarrow{\EComp_{\mathrm{sync}}}
+  \text{light-signal synchronization}\\
+  &\xrightarrow{\EComp_{\mathrm{inertial}}}
+  \text{inertial-frame coordinate time}\\
+  &\xrightarrow{\EComp_{\mathrm{Lorentz}}}
+  \text{Lorentz-compatible transformations}\\
+  &\xrightarrow{\EComp_{\mathrm{interval}}}
+  \mathbb E_{\mathrm{SR}}.
+\end{aligned}
+\]
+The central cut is synchronization.  What was transparent in the
+Newtonian record becomes an explicit operation:
+\[
+  \text{remote simultaneity}
+  \quad\leadsto\quad
+  \text{clock comparison by signal protocol}.
+\]
+The carrier is no longer a single absolute time assignment.  It is a
+special-relativistic carrier in which coordinate time is indexed by
+inertial frame and constrained by the constancy of light speed.  The
+adoptive face contains
+\[
+\begin{aligned}
+  U_{\mathrm{SR}}
+  =
+  \{&\text{local clocks, synchronization, inertial frames,}\\
+    &\text{Lorentz transformations, invariant interval}\}.
+\end{aligned}
+\]
+The non-adoptive residue contains
+\[
+\begin{aligned}
+  D_{\mathrm{Newton}}
+  =
+  \{&\text{universal simultaneity, frame-independent absolute time,}\\
+    &\text{Galilean velocity addition, instantaneous global temporal order}\}.
+\end{aligned}
+\]
+This is not erasure of Newtonian mechanics.  It is a factorization of the
+role played by absolute time into observable clock readings, synchronization,
+frame choice, transformation law, and invariant spacetime interval.
+
+\textbf{Second E-step: special to general relativity.}  The next cut
+vertex is not another synchronization convention.  It is the passage from
+global inertial frames to local inertial structure:
+\[
+\begin{aligned}
+  \mathbb E_{\mathrm{SR}}
+  &\xrightarrow{\EComp_{\mathrm{local}}}
+  \text{local inertial frames}\\
+  &\xrightarrow{\EComp_{\mathrm{equiv}}}
+  \text{equivalence principle}\\
+  &\xrightarrow{\EComp_{g}}
+  \text{metric field }g\\
+  &\xrightarrow{\EComp_{\mathrm{curv}}}
+  \text{curvature}\\
+  &\xrightarrow{\EComp_{\mathrm{EFE}}}
+  \mathbb E_{\mathrm{GR}}.
+\end{aligned}
+\]
+Special relativity remains as a local record: in sufficiently small
+regions and in the absence of curvature effects at the chosen resolution,
+the general relativistic record restricts to a special-relativistic one.
+The general relativistic extension changes the carrier from flat
+Minkowski spacetime to metric spacetime.  Time is no longer merely
+frame-indexed coordinate time on a flat background; it is part of a
+metric field whose geometry is coupled to gravitation.
+
+The complete theoretical surgery can therefore be summarized as
+\[
+\begin{aligned}
+  \text{absolute Newtonian time}
+  &\xrightarrow{\EComp_{\mathcal S_{\mathrm{rel}}}}
+  \text{clock/synchronization/frame/interval structure}\\
+  &\xrightarrow{\EComp_{\mathcal G_{\mathrm{rel}}}}
+  \text{local inertial/metric/curvature structure}.
+\end{aligned}
+\]
+The USD reading is that Einstein did not merely negate the Newtonian
+record.  He inserted the missing operational vertices, preserved the
+usable low-speed and weak-field residue through appropriate limiting
+policies, and moved the privileged invariant from absolute time to
+spacetime structure.  A USD-free physical claim about the Newtonian limit,
+Lorentz transformations, or Einstein field equations still requires the
+ordinary base theory; the USD test only records the typed decomposition
+flow.
+
 % -----------------------------------------------------------------------------
 \section{Interdisciplinary test model}
 % -----------------------------------------------------------------------------
@@ -1789,6 +1925,11 @@ Alexander Grothendieck.
 Alfred Tarski.
 \newblock A lattice-theoretical fixpoint theorem and its applications.
 \newblock \emph{Pacific Journal of Mathematics}, 5(2):285--309, 1955.
+
+\bibitem{Newton1687}
+Isaac Newton.
+\newblock \emph{Philosophi\ae{} Naturalis Principia Mathematica}.
+\newblock 1687.
 
 \bibitem{Einstein1905}
 Albert Einstein.
