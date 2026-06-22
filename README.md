@@ -27,6 +27,10 @@ The Up-Side-Down functor is not a new equality, a new physical law, or a new pro
 - [A syntactic reference implementation](#a-syntactic-reference-implementation)
 - [Worked toy model](#worked-toy-model)
 - [Relativistic test model](#relativistic-test-model)
+  - [Newton-Einstein test](#newton-einstein-test)
+- [Interdisciplinary test model](#interdisciplinary-test-model)
+  - [Satoshi test](#satoshi-test)
+  - [Oppenheimer test](#oppenheimer-test)
 - [Reviewer-facing checklist](#reviewer-facing-checklist)
 - [Open problems](#open-problems)
 - [Conclusion](#conclusion)
@@ -35,9 +39,17 @@ The Up-Side-Down functor is not a new equality, a new physical law, or a new pro
 
 This draft responds to a common failure mode in early USD notation: terms such as relation, boundary, observation, adoption, refusal, gap, and turn can sound like explanatory prose rather than mathematical data. The present version therefore treats USD theory as a typed reference implementation. The reader should not be asked to infer the missing interfaces. They are made explicit.
 
-This paper does not claim that USD notation proves a new equality, a new inequality, a physical theorem, or a computational separation. It does not identify boundary-visible connection with equality. It does not identify non-adoption with ordinary negation. It does not claim that the relativistic discussion below proves anything about special or general relativity. The relativistic section is a test model for the vocabulary of observers, frames, local restrictions, and temporal records.
+<div class="remark">
 
-This paper claims that one can specify a category of smart functors whose objects are ordinary functors equipped with additional USD structure, and that the main USD composition operations can be given as typed operations using standard categorical vocabulary: pushouts or gluing for compression, pullback or reindexing for downward composition, factorization for extension, fixed points for sideways stabilization, involution plus sequence reversal for temporal turnover, and Kan-style images for upward composition.
+**Remark 1** (What this paper does not claim). This paper does not claim that USD notation proves a new equality, a new inequality, a physical theorem, or a computational separation. It does not identify boundary-visible connection with equality. It does not identify non-adoption with ordinary negation. It does not claim that the relativistic discussion below proves anything about special or general relativity. The relativistic section is a test model for the vocabulary of observers, frames, local restrictions, and temporal records.
+
+</div>
+
+<div class="remark">
+
+**Remark 2** (What this paper does claim). This paper claims that one can specify a category of smart functors whose objects are ordinary functors equipped with additional USD structure, and that the main USD composition operations can be given as typed operations using standard categorical vocabulary: pushouts or gluing for compression, pullback or reindexing for downward composition, factorization for extension, fixed points for sideways stabilization, involution plus sequence reversal for temporal turnover, and Kan-style images for upward composition.
+
+</div>
 
 The intended comparison is with a smart pointer in programming. A raw pointer stores an address. A smart pointer stores an address together with ownership, lifetime, and release discipline. Likewise, a raw functor stores functorial action. A USD functor stores functorial action together with an adoptive face and a non-adoptive face that are stance-lifts of the same carrier, together with a boundary witness and a coherence contract. Forgetting these fields returns the raw functor. Keeping them enables safe composition of records without silently turning records into proof steps.
 
@@ -45,9 +57,15 @@ The intended comparison is with a smart pointer in programming. A raw pointer st
 
 This section fixes the data that later sections use. The goal is to avoid introducing objects such as $`\mathsf{Rel}`$, $`\mathsf{BVis}`$, $`\mathsf{Obs}`$, or $`\mathsf{NonAdopt}`$ as undefined prose.
 
-Let $`\mathcal P`$ be a small category. Its objects are positions, contexts, observers, stages, regions, or local situations. A morphism $`\phi:p\to q`$ is an admissible transition of context. In concrete models $`\mathcal P`$ may be a poset, a site, or a category of local charts.
+<div class="assumption">
 
-Let
+**Assumption 3** (Context category). Let $`\mathcal P`$ be a small category. Its objects are positions, contexts, observers, stages, regions, or local situations. A morphism $`\phi:p\to q`$ is an admissible transition of context. In concrete models $`\mathcal P`$ may be a poset, a site, or a category of local charts.
+
+</div>
+
+<div class="assumption">
+
+**Assumption 4** (Indexed entity category). Let
 
 ```math
 E:\mathcal P^{\mathrm{op}}\to \mathbf{Cat}
@@ -55,7 +73,11 @@ E:\mathcal P^{\mathrm{op}}\to \mathbf{Cat}
 
 be an indexed category. For each context $`p`$ the category $`E(p)`$ contains the entities, expressions, records, or local objects available at $`p`$. For each transition $`\phi:p\to q`$, the reindexing functor $`E(\phi):E(q)\to E(p)`$ gives the local view of a $`q`$-object at $`p`$.
 
-The category of situated occurrences is the Grothendieck construction
+</div>
+
+<div class="construction">
+
+**Construction 5** (Situated occurrence category). The category of situated occurrences is the Grothendieck construction
 
 ```math
 \mathsf{Occ}(E)\mathrel{:=}\int_{\mathcal P}E.
@@ -69,9 +91,13 @@ An object is a pair $`(p,x)`$ with $`x\in E(p)`$. A morphism $`(p,x)\to(q,y)`$ i
 
 in $`E(p)`$. Composition is the usual composition in the Grothendieck construction.
 
+</div>
+
 This definition repairs the ambiguity that appears when a set of positions is used while morphisms $`p\to q`$ are also required. From this point on, context transitions are morphisms in $`\mathcal P`$.
 
-Let $`\mathcal C`$ be a category. A relation witness structure on $`\mathcal C`$ is a profunctor valued in posets,
+<div class="assumption">
+
+**Assumption 6** (Relation witness profunctor). Let $`\mathcal C`$ be a category. A relation witness structure on $`\mathcal C`$ is a profunctor valued in posets,
 
 ```math
 \mathsf{Rel}_{\mathcal C}:\mathcal C^{\mathrm{op}}\times\mathcal C\to \mathbf{Pos}.
@@ -79,7 +105,11 @@ Let $`\mathcal C`$ be a category. A relation witness structure on $`\mathcal C`$
 
 An element $`r\in \mathsf{Rel}_{\mathcal C}(a,b)`$ is a witness that $`a`$ and $`b`$ are related in the specified sense. Functoriality gives transport of relation witnesses along morphisms of $`\mathcal C`$.
 
-Boundary visibility is a substructure of relation witnesses. We write
+</div>
+
+<div class="assumption">
+
+**Assumption 7** (Boundary visibility). Boundary visibility is a substructure of relation witnesses. We write
 
 ```math
 \mathsf{BVis}_{\mathcal C}\hookrightarrow \mathsf{Rel}_{\mathcal C}
@@ -93,13 +123,21 @@ for a subfunctor or indexed subposet. A boundary witness over $`r\in\mathsf{Rel}
 
 Thus $`\mathsf{BVis}`$ is not a metaphor; it is a typed predicate over relation witnesses.
 
-Nothing in the formal development requires $`\mathsf{Rel}`$ to be equality, isomorphism, equivalence, metric proximity, causal accessibility, or logical entailment. Those are model choices. The USD reference implementation only assumes relation witnesses and boundary witnesses.
+</div>
+
+<div class="remark">
+
+**Remark 8** (Minimality of the base). Nothing in the formal development requires $`\mathsf{Rel}`$ to be equality, isomorphism, equivalence, metric proximity, causal accessibility, or logical entailment. Those are model choices. The USD reference implementation only assumes relation witnesses and boundary witnesses.
+
+</div>
 
 ## The USD record fibration
 
 The adoptive and non-adoptive sides are not introduced as two unrelated categories. They arise as fibers of a single record fibration.
 
-The stance category $`\mathsf{St}`$ has two distinguished objects
+<div class="definition">
+
+**Definition 9** (Stance category). The stance category $`\mathsf{St}`$ has two distinguished objects
 
 ```math
 U,\quad D,
@@ -116,7 +154,11 @@ called the adoptive stance and the non-adoptive stance. We assume an involutive 
 
 The category $`\mathsf{St}`$ may be taken discrete in the minimal model. In richer models it may contain comparison morphisms between stances.
 
-A USD record fibration is a functor
+</div>
+
+<div class="definition">
+
+**Definition 10** (USD record fibration). A USD record fibration is a functor
 
 ```math
 \pi:\mathsf{Rec}_{\mathsf{USD}}\to \mathsf{St}.
@@ -136,7 +178,11 @@ and the fiber over $`D`$ is the non-adoptive record category
 
 The notation $`\mathcal U`$ and $`\mathcal D`$ therefore denotes fibers of one record fibration, not two arbitrary background categories.
 
-Fix a carrier category $`\mathcal C`$. A carrier-realized USD record fibration over $`\mathcal C`$ is a USD record fibration together with a realization functor
+</div>
+
+<div class="definition">
+
+**Definition 11** (Carrier-realized USD record fibration). Fix a carrier category $`\mathcal C`$. A carrier-realized USD record fibration over $`\mathcal C`$ is a USD record fibration together with a realization functor
 
 ```math
 r:\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C
@@ -164,9 +210,17 @@ Thus every USD record has both a stance and a realized carrier. For $`c\in\mathc
 
 denotes the category of stance-$`s`$ records realizing the carrier datum $`c`$. The notation suppresses the dependence of $`\mathsf{Rec}_{\mathsf{USD}}`$ on $`\mathcal C`$ when no confusion is possible.
 
-The projection $`\pi:\mathsf{Rec}_{\mathsf{USD}}\to\mathsf{St}`$ separates adoptive from non-adoptive records, but by itself it does not say which ordinary carrier object a record is about. The realization functor $`r:\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C`$ fills this gap. It prevents the pure carrier, the adoptive face, and the non-adoptive face of a USD functor from becoming three unrelated functors.
+</div>
 
-The record category contains typed constructors
+<div class="remark">
+
+**Remark 12** (Why realization is required). The projection $`\pi:\mathsf{Rec}_{\mathsf{USD}}\to\mathsf{St}`$ separates adoptive from non-adoptive records, but by itself it does not say which ordinary carrier object a record is about. The realization functor $`r:\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C`$ fills this gap. It prevents the pure carrier, the adoptive face, and the non-adoptive face of a USD functor from becoming three unrelated functors.
+
+</div>
+
+<div class="definition">
+
+**Definition 13** (Record constructors). The record category contains typed constructors
 
 ```math
 \mathsf{Obs},
@@ -184,12 +238,17 @@ with the following intended types:
   \mathsf{Adopt}&: \mathsf{Rel}_{\mathcal C}(a,b)\to \mathcal U,\\
   \mathsf{NonAdopt}&: \mathsf{Rel}_{\mathcal C}(a,b)\to \mathcal D,\\
   \mathsf{Bnd}&: \mathsf{BVis}_{\mathcal C}(r)\to \mathsf{Rec}_{\mathsf{USD}},\\
-  \mathsf{Collapse}&: \mathsf{Rel}_{\mathcal C}(a,b)\to \mathsf{Rec}_{\mathsf{USD}}.\end{aligned}
+  \mathsf{Collapse}&: \mathsf{Rel}_{\mathcal C}(a,b)\to \mathsf{Rec}_{\mathsf{USD}}.
+\end{aligned}
 ```
 
 These constructors are part of the syntax of records. A model may interpret them as evidence, annotations, proof-search traces, logs, or semantic states. The realization functor $`r:\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C`$ records which carrier datum such a constructed record is about; two records may have different stances while realizing the same carrier.
 
-Given $`x,y`$ in a common context, the notation
+</div>
+
+<div class="definition">
+
+**Definition 14** (Directed stance notation). Given $`x,y`$ in a common context, the notation
 
 ```math
 x\mathrel{\leadsto_{\mathsf{USD}}}y
@@ -203,11 +262,15 @@ x\mathrel{\dashrightarrow_{\mathsf{USD}}}y
 
 means that a proposed connection from $`x`$ to $`y`$ has been observed but is recorded on the non-adoptive side. Neither notation is equality or ordinary inequality.
 
+</div>
+
 ## USD functors as smart functors
 
 We now define the main object. The definition is deliberately close to a reference implementation: a USD functor is a record with fields.
 
-Let $`\mathcal X`$ and $`\mathcal C`$ be categories. A pure carrier is an ordinary functor
+<div class="definition">
+
+**Definition 15** (Pure carrier). Let $`\mathcal X`$ and $`\mathcal C`$ be categories. A pure carrier is an ordinary functor
 
 ```math
 F:\mathcal X\to\mathcal C.
@@ -215,7 +278,11 @@ F:\mathcal X\to\mathcal C.
 
 It is the raw functor that remains after forgetting all USD metadata.
 
-Let $`q=(r,\pi):\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C\times\mathsf{St}`$ be a carrier-realized USD record fibration and let $`F:\mathcal X\to\mathcal C`$ be a pure carrier. Write
+</div>
+
+<div class="definition">
+
+**Definition 16** (Stance-lifts of a carrier). Let $`q=(r,\pi):\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C\times\mathsf{St}`$ be a carrier-realized USD record fibration and let $`F:\mathcal X\to\mathcal C`$ be a pure carrier. Write
 
 ```math
 \underline U,\underline D:\mathcal X\to\mathsf{St}
@@ -247,7 +314,11 @@ q\circ D_F=(F,\underline D).
 
 Equivalently, $`\pi U_F=\underline U`$, $`\pi D_F=\underline D`$, and $`rU_F=F=rD_F`$. In a lax model, these equalities may be replaced by specified comparison 2-cells, but the strict form is the reference implementation used in the main text.
 
-A USD functor from $`\mathcal X`$ to $`\mathcal C`$ is a tuple
+</div>
+
+<div class="definition">
+
+**Definition 17** (USD functor). A USD functor from $`\mathcal X`$ to $`\mathcal C`$ is a tuple
 
 ```math
 \mathbb H=(F,U_F,D_F,\partial_F,\kappa_F)
@@ -273,7 +344,11 @@ natural in $`x\in\mathcal X`$.
 
 The critical point is that $`U_F`$ and $`D_F`$ do not merely accompany $`F`$: they are records over the same realized carrier $`F`$.
 
-For a USD functor $`\mathbb H=(F,U_F,D_F,\partial_F,\kappa_F)`$, the coherence contract is a tuple of obligations
+</div>
+
+<div class="definition">
+
+**Definition 18** (Coherence contract). For a USD functor $`\mathbb H=(F,U_F,D_F,\partial_F,\kappa_F)`$, the coherence contract is a tuple of obligations
 
 ```math
 \kappa_F=(\kappa_F^{\mathrm{lift}},
@@ -300,7 +375,11 @@ Here:
 
 Thus $`\kappa_F`$ is not auxiliary prose; it is the contract that makes the smart functor safe to reference, transform, compose, erase, and descend.
 
-There is a forgetful functor
+</div>
+
+<div class="definition">
+
+**Definition 19** (Forgetful functor). There is a forgetful functor
 
 ```math
 |-|:\mathsf{Smart}_{\mathsf{USD}}(\mathcal X,\mathcal C)\to [\mathcal X,\mathcal C]
@@ -314,7 +393,11 @@ which sends
 
 This is the categorical version of dereferencing the smart functor to its pure carrier.
 
-The data $`\mathcal U`$ and $`\mathcal D`$ are not assumed independently and then attached to $`F`$. They are stance fibers of the single record fibration $`\pi:\mathsf{Rec}_{\mathsf{USD}}\to\mathsf{St}`$, and the same records are realized in the carrier category by $`r:\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C`$. Consequently the adoptive and non-adoptive faces of a USD functor are stance-lifts over the same pure carrier:
+</div>
+
+<div class="remark">
+
+**Remark 20** (Why this is not merely gluing two categories). The data $`\mathcal U`$ and $`\mathcal D`$ are not assumed independently and then attached to $`F`$. They are stance fibers of the single record fibration $`\pi:\mathsf{Rec}_{\mathsf{USD}}\to\mathsf{St}`$, and the same records are realized in the carrier category by $`r:\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C`$. Consequently the adoptive and non-adoptive faces of a USD functor are stance-lifts over the same pure carrier:
 
 ```math
 q\circ U_F=(F,\underline U),
@@ -324,7 +407,11 @@ q\circ U_F=(F,\underline U),
 
 The boundary witness $`\partial_F`$ and coherence contract $`\kappa_F`$ therefore relate two readings of one carrier, not two unrelated functors.
 
-A free USD functor is a USD functor considered before anchoring it to particular entities. An anchored USD functor is a free USD functor equipped with endpoints or a local occurrence context. We write
+</div>
+
+<div class="definition">
+
+**Definition 21** (Free and anchored USD functors). A free USD functor is a USD functor considered before anchoring it to particular entities. An anchored USD functor is a free USD functor equipped with endpoints or a local occurrence context. We write
 
 ```math
 \mathsf{Anch}_{a,b}(\mathbb H)=\mathbb H_{a,b}:a\Rightarrow_{\mathsf{USD}}b
@@ -332,11 +419,15 @@ A free USD functor is a USD functor considered before anchoring it to particular
 
 for anchoring $`\mathbb H`$ between $`a`$ and $`b`$ when the required endpoint and boundary data exist.
 
+</div>
+
 The distinction is essential. Functions, expressions, programs, formulas, and hypotheses may be free USD functors before they touch any particular pair of entities. Entity-to-entity contact is an anchoring of an already typed USD functor.
 
 ## Morphisms and the category of USD functors
 
-Let
+<div class="definition">
+
+**Definition 22** (Morphism of USD functors). Let
 
 ```math
 \mathbb H=(F,U_F,D_F,\partial_F,\kappa_F),\qquad
@@ -367,15 +458,25 @@ q\eta^D=(\eta^0,\mathrm{id}_{\underline D});
 
 5.  preservation of the coherence contracts, in particular $`\kappa^{\mathrm{lift}}`$, $`\kappa^{\partial}`$, and $`\kappa^{\mathrm{erase}}`$.
 
-For fixed $`\mathcal X`$ and $`\mathcal C`$, USD functors and their morphisms form a category, denoted
+</div>
+
+<div class="proposition">
+
+**Proposition 23** (Category of USD functors). *For fixed $`\mathcal X`$ and $`\mathcal C`$, USD functors and their morphisms form a category, denoted
 
 ```math
 \mathsf{Smart}_{\mathsf{USD}}(\mathcal X,\mathcal C),
 ```
 
-provided the total record category admits vertical composition of $`q`$-compatible natural transformations and the coherence contracts are closed under identity and composition.
+provided the total record category admits vertical composition of $`q`$-compatible natural transformations and the coherence contracts are closed under identity and composition.*
 
-Identities are inherited componentwise from the functor category and the record category. Composition is componentwise and remains compatible with $`q`$ because carrier and stance components compose in $`\mathcal C\times\mathsf{St}`$. The boundary compatibility and contract preservation conditions are stable by the assumed closure of contracts. The forgetful projection to $`[\mathcal X,\mathcal C]`$ is functorial by construction.
+</div>
+
+<div class="proof">
+
+*Proof.* Identities are inherited componentwise from the functor category and the record category. Composition is componentwise and remains compatible with $`q`$ because carrier and stance components compose in $`\mathcal C\times\mathsf{St}`$. The boundary compatibility and contract preservation conditions are stable by the assumed closure of contracts. The forgetful projection to $`[\mathcal X,\mathcal C]`$ is functorial by construction. ◻
+
+</div>
 
 This proposition is intentionally modest. It is not advertised as a deep category-theoretic theorem. It is the sanity check that the reference implementation has the shape of a category.
 
@@ -383,7 +484,9 @@ This proposition is intentionally modest. It is not advertised as a deep categor
 
 The following six operations are specified as APIs. Each operation has a mathematical implementation and a natural-language reading. None is an ordinary proof rule for equality, inequality, or physical truth.
 
-Every composition API below is required to preserve carrier-realized stance-lifts. If the output has carrier $`F':\mathcal X'\to\mathcal C`$, then its output faces must satisfy
+<div class="assumption">
+
+**Assumption 24** (Common closure invariant for composition). Every composition API below is required to preserve carrier-realized stance-lifts. If the output has carrier $`F':\mathcal X'\to\mathcal C`$, then its output faces must satisfy
 
 ```math
 q\circ U_{F'}=(F',\underline U),
@@ -393,9 +496,13 @@ q\circ U_{F'}=(F',\underline U),
 
 This is the operational content of $`\kappa^{\mathrm{comp}}`$: composition may change the carrier, boundary, or indexing shape, but it may not detach U-face or D-face records from their carrier realization.
 
+</div>
+
 ### C-composition: compression
 
-**Input.** Two free USD functors
+<div class="api">
+
+**API 25** (C-composition). **Input.** Two free USD functors
 
 ```math
 \mathbb H:\mathcal X\to\mathcal C,
@@ -428,6 +535,8 @@ exists in $`\mathbf{Cat}`$, and the carrier and record data glue along the inter
 
 
 
+</div>
+
 Mathematically, C-composition is gluing or compression by a pushout of domains plus compatible gluing of the carrier, adoptive face, non-adoptive face, and boundary witness. It compresses two freely available USD functors into one referenceable USD functor. It does not assert that the two inputs were identical; the joint boundary record retains the old boundary data and the new interface discrepancy.
 
 A minimal boundary policy is
@@ -444,7 +553,9 @@ where $`\Delta_{\mathcal I}`$ is the interface discrepancy supplied by the model
 
 ### D-composition: downward restriction
 
-**Input.** A context morphism
+<div class="api">
+
+**API 26** (D-composition). **Input.** A context morphism
 
 ```math
 \rho:\mathcal L\to\mathcal G
@@ -474,11 +585,15 @@ q(\rho^*U_F)=(\rho^*F,\underline U),
 
 
 
+</div>
+
 The natural-language reading is: a large observed USD functor is lowered to a local context. The operation is not a proof that the local context satisfies the global claim. It is the typed act of reading the global record through a local index.
 
 ### E-composition: extension by a cut vertex
 
-**Input.** An anchored USD functor
+<div class="api">
+
+**API 27** (E-composition). **Input.** An anchored USD functor
 
 ```math
 \mathbb H_{a,b}:a\Rightarrow_{\mathsf{USD}}b
@@ -507,13 +622,17 @@ or the reverse comparison, depending on the model.
 
 
 
+</div>
+
 E-composition extends one anchored USD functor by adding an internal observation point. It should be read as subdivision or refinement, not as a proof that the original record is strictly equal to the composite.
 
 ### S-composition: sideways shared stabilization
 
 S-composition is the operation most in need of explicit existence conditions. We therefore specify the gap space before defining the operation.
 
-For a pair of compatible USD functors $`\mathbb H,\mathbb K`$, assume a complete lattice
+<div class="assumption">
+
+**Assumption 28** (Gap lattice). For a pair of compatible USD functors $`\mathbb H,\mathbb K`$, assume a complete lattice
 
 ```math
 \Lambda_{\mathbb H,\mathbb K}
@@ -521,7 +640,11 @@ For a pair of compatible USD functors $`\mathbb H,\mathbb K`$, assume a complete
 
 of possible gap values. The order $`\leq`$ means “no more discrepant than” or any chosen model-specific refinement order.
 
-A sideways interaction supplies a monotone update map
+</div>
+
+<div class="assumption">
+
+**Assumption 29** (Gap update). A sideways interaction supplies a monotone update map
 
 ```math
 \Phi_{\mathbb H,\mathbb K}:
@@ -531,7 +654,11 @@ A sideways interaction supplies a monotone update map
 
 The value $`\Phi(\Delta)`$ is the new discrepancy after both sides have incorporated the current discrepancy into their non-adoptive records.
 
-**Input.** A pair of compatible USD functors $`\mathbb H,\mathbb K`$ and a monotone gap update map $`\Phi_{\mathbb H,\mathbb K}`$ on a complete lattice of gaps.
+</div>
+
+<div class="api">
+
+**API 30** (S-composition). **Input.** A pair of compatible USD functors $`\mathbb H,\mathbb K`$ and a monotone gap update map $`\Phi_{\mathbb H,\mathbb K}`$ on a complete lattice of gaps.
 
 **Existence condition.** A fixed point
 
@@ -549,11 +676,15 @@ is selected. Existence follows, for example, from the Knaster-Tarski fixed point
 
 
 
+</div>
+
 Natural-language reading: two USD functors do not eliminate their gap. They update their non-adoptive faces until the same gap is shared as a stable discrepancy. The completion condition is not $`\Delta^*=0`$ but shared stability.
 
 ### T-composition: temporal turnover
 
-Let $`\mathsf{Seq}(\mathsf{Smart}_{\mathsf{USD}})`$ be the category of finite composable sequences of USD functors. An object is a finite chain
+<div class="definition">
+
+**Definition 31** (Sequence category). Let $`\mathsf{Seq}(\mathsf{Smart}_{\mathsf{USD}})`$ be the category of finite composable sequences of USD functors. An object is a finite chain
 
 ```math
 \mathcal H=(\mathbb H_1,\ldots,\mathbb H_n).
@@ -561,7 +692,11 @@ Let $`\mathsf{Seq}(\mathsf{Smart}_{\mathsf{USD}})`$ be the category of finite co
 
 
 
-Assume that the stance involution $`\tau:\mathsf{St}\to\mathsf{St}`$ lifts to a carrier-preserving record involution
+</div>
+
+<div class="definition">
+
+**Definition 32** (U/D flip). Assume that the stance involution $`\tau:\mathsf{St}\to\mathsf{St}`$ lifts to a carrier-preserving record involution
 
 ```math
 \bar\tau:\mathsf{Rec}_{\mathsf{USD}}\to\mathsf{Rec}_{\mathsf{USD}},
@@ -595,7 +730,11 @@ q(\bar\tau D_F)=(F,\underline U),
 
 so T-composition turns the record upside down without touching the realized carrier.
 
-**Input.** A finite USD functor chain
+</div>
+
+<div class="api">
+
+**API 33** (T-composition). **Input.** A finite USD functor chain
 
 ```math
 \mathcal H=(\mathbb H_1,\ldots,\mathbb H_n).
@@ -624,6 +763,8 @@ so that
 
 **Output.** A temporally turned-over USD record chain.
 
+</div>
+
 T-composition touches no entity. It reverses the order of the record chain and applies the carrier-preserving stance turnover to every adoptive and non-adoptive face. A chain that was read forward as an identification proposal may be re-read backward as a non-adoption record, but this is a transformation of records, not a proof of ordinary inequality.
 
 If no information is lost, $`\mathsf{TComp}`$ is involutive up to record equivalence:
@@ -644,7 +785,9 @@ may be all that remains.
 
 D-composition has two common adjoints when the relevant Kan extensions exist. We keep the existential and universal readings separate.
 
-Let $`\rho:\mathcal L\to\mathcal G`$ be a context morphism.
+<div class="api">
+
+**API 34** (U-composition). Let $`\rho:\mathcal L\to\mathcal G`$ be a context morphism.
 
 **Existential upward composition.** When the left Kan extension exists, define
 
@@ -696,6 +839,8 @@ q\circ U_{\mathrm{Lan}_\rho F}=(\mathrm{Lan}_\rho F,\underline U),
 
 and similarly for $`\Pi_\rho`$ and $`\mathrm{Ran}_\rho F`$. The existence of the ordinary Kan extension of $`F`$ is therefore not enough; the USD record and contract data must lift with it.
 
+</div>
+
 If these lifted Kan extensions do not exist, the relevant U-composition is undefined in the smart category even when the carrier Kan extension exists.
 
 The natural-language reading is that a local USD functor is pushed upward as a global candidate record. The existential version says that some local contribution is imaged globally; the universal version says that a local condition is extended as a global constraint when possible.
@@ -720,7 +865,9 @@ The first sequence compresses free records, lowers them, and subdivides anchored
 
 The preceding APIs define how USD records may be composed. We now record one derived notion that will be useful in examples: an $`S`$-molecule. The term is intentionally internal to USD theory. It does not mean a chemical molecule unless a separate physical realization or descent license is supplied.
 
-Let $`A`$ and $`B`$ be compatible USD records or USD functors. A U/D interlock between $`A`$ and $`B`$ is boundary-visible data witnessing that the adoptive face of each side can be read against the non-adoptive face of the other side. In notation, this is recorded as
+<div class="definition">
+
+**Definition 35** (U/D interlock). Let $`A`$ and $`B`$ be compatible USD records or USD functors. A U/D interlock between $`A`$ and $`B`$ is boundary-visible data witnessing that the adoptive face of each side can be read against the non-adoptive face of the other side. In notation, this is recorded as
 
 ```math
 U_A \mathrel{\leadsto_{\mathsf{USD}}}D_B,
@@ -730,7 +877,11 @@ U_A \mathrel{\leadsto_{\mathsf{USD}}}D_B,
 
 together with the relevant boundary witnesses and coherence data. The symbol $`\mathrel{\leadsto_{\mathsf{USD}}}`$ is not equality. It records a boundary-visible connection between stance-lifted records over their realized carriers.
 
-Let $`A`$ and $`B`$ be compatible USD records or USD functors. Assume a complete gap lattice
+</div>
+
+<div class="definition">
+
+**Definition 36** (S-molecule). Let $`A`$ and $`B`$ be compatible USD records or USD functors. Assume a complete gap lattice
 
 ```math
 \Lambda_{A,B}
@@ -758,9 +909,17 @@ together with a U/D interlock between $`A`$ and $`B`$, such that the fixed gap $
 
 Thus an $`S`$-molecule is not the collapse of $`A`$ and $`B`$ into one identity. It is a USD composite in which two distinguishable sides keep a shared stable discrepancy and become observable as one composite record.
 
-The word “molecule” is used here by analogy with stable composite entities. A physical covalent molecule, a polymer, a software package dependency cluster, or a social institution may be modeled as an $`S`$-molecule only after specifying an interpretation of $`A`$, $`B`$, the gap lattice, the update map, and the relevant boundary witnesses. Without such an interpretation, $`\mathrm{SMol}(A,B;\Delta^*)`$ is only a USD record.
+</div>
 
-Let $`\star`$ be one of the USD composition APIs, whenever its input data are compatible. A positive-negative exchange datum, or PN-exchange datum, for a composition instance consists of an estimated gain
+<div class="remark">
+
+**Remark 37** (Meaning of molecule). The word “molecule” is used here by analogy with stable composite entities. A physical covalent molecule, a polymer, a software package dependency cluster, or a social institution may be modeled as an $`S`$-molecule only after specifying an interpretation of $`A`$, $`B`$, the gap lattice, the update map, and the relevant boundary witnesses. Without such an interpretation, $`\mathrm{SMol}(A,B;\Delta^*)`$ is only a USD record.
+
+</div>
+
+<div class="definition">
+
+**Definition 38** (Positive-negative exchange). Let $`\star`$ be one of the USD composition APIs, whenever its input data are compatible. A positive-negative exchange datum, or PN-exchange datum, for a composition instance consists of an estimated gain
 
 ```math
 \widehat G_{\star}
@@ -790,7 +949,11 @@ called the self-anchored residue functor. Thus the output shape is
 
 The residue functor stores the loss, discrepancy, non-adoption, delay, and boundary-visible waste that the main composite does not adopt.
 
-Let
+</div>
+
+<div class="definition">
+
+**Definition 39** (PN-conservation). Let
 
 ```math
 \mathsf{Qty}:\mathsf{Smart}_{\mathsf{USD}}(\mathcal X,\mathcal C)\to\mathcal R
@@ -808,9 +971,17 @@ be a USD quantity valuation into an ordered commutative monoid $`\mathcal R`$. A
 
 Thus USD quantity is not destroyed by composition. What is not adopted by the main composite remains as a self-anchored residue functor.
 
-Without the residue functor, a USD composition may look as if the unadopted part of the interaction has disappeared. The PN-exchange policy prevents this. It makes every loss or mismatch accountable either inside the main composite or inside its self-anchored residue. This is consistent with the conservative design of USD theory: unadopted records are not silently converted into USD-free conclusions.
+</div>
 
-Let
+<div class="remark">
+
+**Remark 40** (Why residue is part of the composition). Without the residue functor, a USD composition may look as if the unadopted part of the interaction has disappeared. The PN-exchange policy prevents this. It makes every loss or mismatch accountable either inside the main composite or inside its self-anchored residue. This is consistent with the conservative design of USD theory: unadopted records are not silently converted into USD-free conclusions.
+
+</div>
+
+<div class="definition">
+
+**Definition 41** (UD-spin). Let
 
 ```math
 \mathbb M=\mathrm{SMol}(A,B;\Delta^*)
@@ -826,7 +997,11 @@ in which the perturbation circulates between the U-face and D-face of $`\mathbb 
 
 UD-spin is a USD bookkeeping operation. It is not physical spin unless a separate physical model identifies it with a physical spin-like quantity.
 
-Let $`\omega`$ denote a UD-spin speed for an $`S`$-molecule $`\mathbb M`$. Let
+</div>
+
+<div class="definition">
+
+**Definition 42** (Divergence, ejection, and spin termination). Let $`\omega`$ denote a UD-spin speed for an $`S`$-molecule $`\mathbb M`$. Let
 
 ```math
 \mathsf{Div}_{\mathbb M}(\omega)
@@ -850,7 +1025,11 @@ be the amount that can be ejected through boundary-visible residue at that speed
 
 When this condition holds and the induced UD-spin terminates, the $`S`$-molecule returns to a state that is observationally equivalent, at the chosen boundary resolution, to the original composite record.
 
-The critical spin speed of an $`S`$-molecule $`\mathbb M`$ is the boundary spin speed at which the incoming perturbation rate begins to exceed the sum of the divergence capacity and ejection capacity:
+</div>
+
+<div class="definition">
+
+**Definition 43** (Critical spin speed). The critical spin speed of an $`S`$-molecule $`\mathbb M`$ is the boundary spin speed at which the incoming perturbation rate begins to exceed the sum of the divergence capacity and ejection capacity:
 
 ```math
 \lambda_\xi
@@ -878,7 +1057,11 @@ R_{t+1}
 
 When the residue exceeds the tolerance allowed by the coherence contract, the $`S`$-molecule may break, dissociate, reconfigure, or cease to be observable as one composite record.
 
-The internal UD-spin speed of an $`S`$-molecule and the externally observed UD-spin speed need not coincide. We write
+</div>
+
+<div class="definition">
+
+**Definition 44** (Observed UD-spin speed). The internal UD-spin speed of an $`S`$-molecule and the externally observed UD-spin speed need not coincide. We write
 
 ```math
 \omega^{\mathrm{int}}_{\mathbb M}
@@ -900,7 +1083,11 @@ for the boundary-visible observed spin speed. If $`\alpha_{\mathbb M}`$ denotes 
 
 For a long serial chain of $`S`$-molecules, observational resolution may decrease as the chain length increases. In such models the observed UD-spin speed is allowed to remain constant or decrease, even if local internal spin speeds do not decrease.
 
-During the formation or perturbation of an $`S`$-molecule, internal non-equivalent exchanges need not be externally observable. Let $`\sigma_A`$ be the time at which an internal accumulation begins in $`A`$, let $`\theta_A`$ be the time at which that accumulation becomes boundary-visible, and let $`\tau_{A\to B}`$ be the time at which the corresponding exchange is implemented toward $`B`$. The non-observable pending wait from $`A`$ to $`B`$ is
+</div>
+
+<div class="definition">
+
+**Definition 45** (Non-observable pending wait). During the formation or perturbation of an $`S`$-molecule, internal non-equivalent exchanges need not be externally observable. Let $`\sigma_A`$ be the time at which an internal accumulation begins in $`A`$, let $`\theta_A`$ be the time at which that accumulation becomes boundary-visible, and let $`\tau_{A\to B}`$ be the time at which the corresponding exchange is implemented toward $`B`$. The non-observable pending wait from $`A`$ to $`B`$ is
 
 ```math
 T^{\mathrm{NP}}_{A\to B}
@@ -910,7 +1097,11 @@ T^{\mathrm{NP}}_{A\to B}
 
 Here NP means “non-observable pending” and is unrelated to the complexity class NP.
 
-An $`S`$-polymer is a finite or indexed composite of $`S`$-molecules
+</div>
+
+<div class="definition">
+
+**Definition 46** (S-polymer). An $`S`$-polymer is a finite or indexed composite of $`S`$-molecules
 
 ```math
 \mathrm{SMol}_1
@@ -924,13 +1115,21 @@ An $`S`$-polymer is a finite or indexed composite of $`S`$-molecules
 
 which is externally observable as one higher-order USD entity at a chosen boundary resolution. An $`S`$-polymer may model a physical material, a software dependency cluster, an institution, or another composite system, provided that a suitable realization of the USD records is supplied.
 
-A covalent bond may be used as an intuitive model of an $`S`$-molecule: two atoms remain distinguishable while forming a stable shared state through electron-density-mediated interaction. This comparison is only a model reading. USD theory does not redefine covalent bonding, molecular physics, software dependency, or any other base-domain concept. To obtain a USD-free physical conclusion, the relevant descent license must still be supplied in the base theory.
+</div>
+
+<div class="remark">
+
+**Remark 47** (S-molecules and physical examples). A covalent bond may be used as an intuitive model of an $`S`$-molecule: two atoms remain distinguishable while forming a stable shared state through electron-density-mediated interaction. This comparison is only a model reading. USD theory does not redefine covalent bonding, molecular physics, software dependency, or any other base-domain concept. To obtain a USD-free physical conclusion, the relevant descent license must still be supplied in the base theory.
+
+</div>
 
 ## A syntactic reference implementation
 
 This section records the minimum syntax needed for a conservative USD calculus. It is intentionally austere.
 
-Let $`\mathcal L_0`$ be a base formal language with judgments
+<div class="definition">
+
+**Definition 48** (Base language). Let $`\mathcal L_0`$ be a base formal language with judgments
 
 ```math
 \Gamma\vdash_0 A.
@@ -938,7 +1137,11 @@ Let $`\mathcal L_0`$ be a base formal language with judgments
 
 The base language may be first-order logic, type theory, an internal language of a category, or another fixed formal system.
 
-The USD calculus $`\mathsf{USDCalc}`$ extends $`\mathcal L_0`$ with record terms:
+</div>
+
+<div class="definition">
+
+**Definition 49** (USD extension). The USD calculus $`\mathsf{USDCalc}`$ extends $`\mathcal L_0`$ with record terms:
 
 ```math
 \mathrm{conn}(x,y;r,\beta),
@@ -961,7 +1164,11 @@ and with record-forming operations
 
 The USD extension does not add a base rule allowing a record term alone to prove a USD-free formula.
 
-A descent license is an explicit rule instance
+</div>
+
+<div class="definition">
+
+**Definition 50** (Descent license). A descent license is an explicit rule instance
 
 ```math
 \mathsf{IdLic}(R,A)
@@ -969,7 +1176,11 @@ A descent license is an explicit rule instance
 
 that permits a USD record $`R`$ to be translated into a base assertion $`A`$ in $`\mathcal L_0`$. Examples include a definition, an isomorphism, a proved equivalence, a semantic interpretation, or a verified coercion.
 
-The erasure translation
+</div>
+
+<div class="definition">
+
+**Definition 51** (Erasure). The erasure translation
 
 ```math
 |-|:\mathsf{USDCalc}\to\mathcal L_0
@@ -977,7 +1188,11 @@ The erasure translation
 
 acts as identity on base terms and formulas and removes pure USD records unless a descent license supplies a base formula.
 
-Assume that every USD inference rule is record-forming, record-transforming, or explicitly licensed by a descent rule. If
+</div>
+
+<div class="theorem">
+
+**Theorem 52** (Conservative design theorem). *Assume that every USD inference rule is record-forming, record-transforming, or explicitly licensed by a descent rule. If
 
 ```math
 \Gamma\vdash_{\mathsf{USDCalc}} A
@@ -989,15 +1204,23 @@ and $`A`$ is USD-free, then the derivation of $`A`$ uses only base rules and lic
 |\Gamma|\vdash_0 A
 ```
 
-provided each used descent license is valid in the base system.
+provided each used descent license is valid in the base system.*
 
-By induction on the given derivation. Base rules translate to base rules. Record-forming and record-transforming USD rules have USD-record conclusions and therefore cannot be the final step of a USD-free formula. If a USD record is used to produce a USD-free conclusion, the rule must be a licensed descent by hypothesis; replacing that step with its base license yields a derivation in $`\mathcal L_0`$. The induction removes all unlicensed USD bookkeeping from the derivation of $`A`$.
+</div>
+
+<div class="proof">
+
+*Proof.* By induction on the given derivation. Base rules translate to base rules. Record-forming and record-transforming USD rules have USD-record conclusions and therefore cannot be the final step of a USD-free formula. If a USD record is used to produce a USD-free conclusion, the rule must be a licensed descent by hypothesis; replacing that step with its base license yields a derivation in $`\mathcal L_0`$. The induction removes all unlicensed USD bookkeeping from the derivation of $`A`$. ◻
+
+</div>
 
 This theorem is deliberately conditional. It states the safety contract of the reference implementation. A stronger metatheorem for a particular formal calculus would require a fully specified proof system, but this condition is already enough to prevent USD records from acting as hidden proof rules.
 
 ## Worked toy model
 
-Let $`\mathcal C`$ be a poset regarded as a category. Let
+<div class="example">
+
+**Example 53** (Poset record model). Let $`\mathcal C`$ be a poset regarded as a category. Let
 
 ```math
 \mathsf{Rel}_{\mathcal C}(a,b)
@@ -1023,15 +1246,27 @@ q=(r,\pi):\mathcal C\times\mathsf{St}\to\mathcal C\times\mathsf{St},
 
 the identity in this minimal model. Then $`\mathcal U\cong\mathcal C\cong\mathcal D`$, but the two copies are distinguished as fibers. A USD functor is a functor $`F`$ together with two stance-lifted copies $`U_F,D_F`$ over the same $`F`$ and a boundary label. In this model D-composition is ordinary reindexing of monotone maps, C-composition is pushout of indexing posets when it exists, and T-composition swaps the two copies and reverses a finite chain while preserving realization.
 
-Let the gap lattice be a complete lattice $`\Lambda`$. If a sideways interaction gives a monotone map $`\Phi:\Lambda\to\Lambda`$, then the set of fixed points is nonempty by the Knaster-Tarski theorem. Choosing the least fixed point gives a canonical minimal shared discrepancy. Choosing the greatest fixed point gives a maximal conservative discrepancy. The choice is part of the model policy.
+</div>
+
+<div class="example">
+
+**Example 54** (Complete lattice gap model). Let the gap lattice be a complete lattice $`\Lambda`$. If a sideways interaction gives a monotone map $`\Phi:\Lambda\to\Lambda`$, then the set of fixed points is nonempty by the Knaster-Tarski theorem. Choosing the least fixed point gives a canonical minimal shared discrepancy. Choosing the greatest fixed point gives a maximal conservative discrepancy. The choice is part of the model policy.
+
+</div>
 
 ## Relativistic test model
 
 The relativistic material is not an application claiming new physics. It is a test model for the USD vocabulary because relativity naturally involves observers, frames, local restrictions, and time-oriented records. The historical sources are Einstein’s 1905 paper on special relativity and his 1916 paper on general relativity .
 
-Let $`(M,g)`$ be a Lorentzian manifold. Let $`\mathcal O(M,g)`$ be a chosen category of local observers or frames. A morphism in $`\mathcal O(M,g)`$ may be a change of frame, inclusion of a local chart, or another chosen admissible comparison of observations.
+<div class="definition">
 
-A global geometric record, such as a metric-dependent record on $`(M,g)`$, may be lowered along a local frame map
+**Definition 55** (Lorentzian test base). Let $`(M,g)`$ be a Lorentzian manifold. Let $`\mathcal O(M,g)`$ be a chosen category of local observers or frames. A morphism in $`\mathcal O(M,g)`$ may be a change of frame, inclusion of a local chart, or another chosen admissible comparison of observations.
+
+</div>
+
+<div class="example">
+
+**Example 56** (D-composition as local restriction). A global geometric record, such as a metric-dependent record on $`(M,g)`$, may be lowered along a local frame map
 
 ```math
 \rho:O\to M
@@ -1045,9 +1280,429 @@ by pullback:
 
 This is the familiar mathematical shape of restricting global data to a local observer or frame. The USD interpretation only adds adoptive and non-adoptive record faces and boundary witnesses.
 
-A time-oriented chain of observation records may be transformed by $`\mathsf{TComp}`$ into the reverse-order chain with U and D faces exchanged. This is not asserted to be physical time reversal symmetry. It is a record operation that leaves the entities and geometric carrier untouched while turning the USD bookkeeping upside down.
+</div>
 
-If a model uses Lorentz transformations, connections, curvature, or field equations, those structures must be explicitly included in the base category or in the relation witness profunctor. USD functors do not supply them automatically.
+<div class="example">
+
+**Example 57** (T-composition as record turnover). A time-oriented chain of observation records may be transformed by $`\mathsf{TComp}`$ into the reverse-order chain with U and D faces exchanged. This is not asserted to be physical time reversal symmetry. It is a record operation that leaves the entities and geometric carrier untouched while turning the USD bookkeeping upside down.
+
+</div>
+
+<div class="remark">
+
+**Remark 58** (No hidden physics). If a model uses Lorentz transformations, connections, curvature, or field equations, those structures must be explicitly included in the base category or in the relation witness profunctor. USD functors do not supply them automatically.
+
+</div>
+
+### Newton-Einstein test
+
+The Newton-Einstein test uses E-composition as its main operation. The test does not claim that Einstein proved Newtonian absolute time false by one direct replacement. It records a two-stage theoretical operation: Newton’s single global time parameter is first decomposed inside special relativity and then extended through local inertial structure into general relativity. The relevant historical base texts are Newton’s *Principia*, Einstein’s 1905 paper on special relativity, and Einstein’s 1916 paper on general relativity .
+
+Let
+
+```math
+\mathcal N_{\mathrm{mech}},
+  \qquad
+  \mathcal S_{\mathrm{rel}},
+  \qquad
+  \mathcal G_{\mathrm{rel}}
+```
+
+denote schematic categories of Newtonian mechanics, special relativity, and general relativity. A Newtonian time record may be written
+
+```math
+\mathbb N_T:a\Rightarrow_{\mathsf{USD}} b,
+```
+
+where an event configuration is assigned to a single frame-independent temporal order. In the Newtonian record, simultaneity and duration are treated as globally available, and the time coordinate is not produced by a synchronization protocol internal to the theory.
+
+The coarse E-composition flow is
+
+```math
+\mathbb N_T
+  \xrightarrow{\mathsf{EComp}_{\mathcal S_{\mathrm{rel}}}}
+  \mathbb E_{\mathrm{SR}}
+  \xrightarrow{\mathsf{EComp}_{\mathcal G_{\mathrm{rel}}}}
+  \mathbb E_{\mathrm{GR}}.
+```
+
+Thus special relativity is not skipped. It is the first cut vertex through which the Newtonian record is factored before the general relativistic record is formed.
+
+**First E-step: Newton to special relativity.** The cut vertex $`m_{\mathrm{SR}}`$ is itself resolved into smaller cuts:
+
+```math
+\begin{aligned}
+  \mathbb N_T
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{clock}}}
+  \text{local clock readings}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{sync}}}
+  \text{light-signal synchronization}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{inertial}}}
+  \text{inertial-frame coordinate time}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{Lorentz}}}
+  \text{Lorentz-compatible transformations}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{interval}}}
+  \mathbb E_{\mathrm{SR}}.
+\end{aligned}
+```
+
+The central cut is synchronization. What was transparent in the Newtonian record becomes an explicit operation:
+
+```math
+\text{remote simultaneity}
+  \quad\leadsto\quad
+  \text{clock comparison by signal protocol}.
+```
+
+The carrier is no longer a single absolute time assignment. It is a special-relativistic carrier in which coordinate time is indexed by inertial frame and constrained by the constancy of light speed. The adoptive face contains
+
+```math
+\begin{aligned}
+  U_{\mathrm{SR}}
+  =
+  \{&\text{local clocks, synchronization, inertial frames,}\\
+    &\text{Lorentz transformations, invariant interval}\}.
+\end{aligned}
+```
+
+The non-adoptive residue contains
+
+```math
+\begin{aligned}
+  D_{\mathrm{Newton}}
+  =
+  \{&\text{universal simultaneity, frame-independent absolute time,}\\
+    &\text{Galilean velocity addition, instantaneous global temporal order}\}.
+\end{aligned}
+```
+
+This is not erasure of Newtonian mechanics. It is a factorization of the role played by absolute time into observable clock readings, synchronization, frame choice, transformation law, and invariant spacetime interval.
+
+**Second E-step: special to general relativity.** The next cut vertex is not another synchronization convention. It is the passage from global inertial frames to local inertial structure:
+
+```math
+\begin{aligned}
+  \mathbb E_{\mathrm{SR}}
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{local}}}
+  \text{local inertial frames}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{equiv}}}
+  \text{equivalence principle}\\
+  &\xrightarrow{\mathsf{EComp}_{g}}
+  \text{metric field }g\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{curv}}}
+  \text{curvature}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathrm{EFE}}}
+  \mathbb E_{\mathrm{GR}}.
+\end{aligned}
+```
+
+Special relativity remains as a local record: in sufficiently small regions and in the absence of curvature effects at the chosen resolution, the general relativistic record restricts to a special-relativistic one. The general relativistic extension changes the carrier from flat Minkowski spacetime to metric spacetime. Time is no longer merely frame-indexed coordinate time on a flat background; it is part of a metric field whose geometry is coupled to gravitation.
+
+The complete theoretical surgery can therefore be summarized as
+
+```math
+\begin{aligned}
+  \text{absolute Newtonian time}
+  &\xrightarrow{\mathsf{EComp}_{\mathcal S_{\mathrm{rel}}}}
+  \text{clock/synchronization/frame/interval structure}\\
+  &\xrightarrow{\mathsf{EComp}_{\mathcal G_{\mathrm{rel}}}}
+  \text{local inertial/metric/curvature structure}.
+\end{aligned}
+```
+
+The USD reading is that Einstein did not merely negate the Newtonian record. He inserted the missing operational vertices, preserved the usable low-speed and weak-field residue through appropriate limiting policies, and moved the privileged invariant from absolute time to spacetime structure. A USD-free physical claim about the Newtonian limit, Lorentz transformations, or Einstein field equations still requires the ordinary base theory; the USD test only records the typed decomposition flow.
+
+## Interdisciplinary test model
+
+The preceding relativistic section tests USD vocabulary inside a mathematical physics setting. The same discipline can be used for interdisciplinary examples, where the carrier data are not all drawn from one field. The purpose of such a model is not to turn a social or economic interpretation into a proof of intention. It is to keep the interfaces visible when social records and economic records are read together.
+
+<div class="definition">
+
+**Definition 59** (Interdisciplinary test base). Let $`\mathcal S`$ be a category of sociological records and let $`\mathcal E`$ be a category of economic records. An interdisciplinary carrier may be taken to be the product category
+
+```math
+\mathcal C_{\mathcal S,\mathcal E}
+  \mathrel{:=}
+  \mathcal S\times\mathcal E,
+```
+
+or, more generally, a category equipped with projection functors
+
+```math
+p_{\mathcal S}:\mathcal C_{\mathcal S,\mathcal E}\to\mathcal S,
+  \qquad
+  p_{\mathcal E}:\mathcal C_{\mathcal S,\mathcal E}\to\mathcal E.
+```
+
+A USD functor into $`\mathcal C_{\mathcal S,\mathcal E}`$ records a joint social-economic reading. Its relation witnesses may compare social data, economic data, or boundary-visible couplings between them.
+
+</div>
+
+<div class="remark">
+
+**Remark 60** (No hidden interdisciplinary descent). An interdisciplinary USD record is not, by itself, an empirical explanation. A descent license must specify the accepted historical sources, social model, economic model, and rule that permits a USD record to be translated into a USD-free claim. Without such a license, the record remains a structured hypothesis or interpretation.
+
+</div>
+
+### Satoshi test
+
+The pseudonymous creator of Bitcoin gives a useful interdisciplinary test case. The Bitcoin white paper presents the system as peer-to-peer electronic cash without reliance on a trusted third party . Late in 2010, Satoshi Nakamoto publicly warned that Bitcoin was still a small beta community and that sudden WikiLeaks-driven attention could bring destructive heat . The following day, Satoshi also described denial-of-service resistance as unfinished work . Separately, claims that Satoshi or a dominant early miner controlled about one million bitcoins depend on chain-analysis heuristics; the evidence is suggestive but not as robust as popular retellings often imply .
+
+Let $`\mathcal A`$ be a small category of possible founder actions: revealing an identity, exercising founder authority, moving early coins, transferring control, remaining pseudonymous, or withdrawing from public control. A Satoshi test record is a USD functor
+
+```math
+\mathbb H_{\mathrm{Sat}}:
+  \mathcal A\to\mathcal C_{\mathcal S,\mathcal E}
+```
+
+whose social projection records effects such as legitimacy, founder authority, regulatory visibility, community dependence, and governance centrality, and whose economic projection records effects such as early coin concentration, liquidity, expected sell pressure, scarcity belief, and market confidence.
+
+In this model, the adoptive face of a withdrawal record may contain the features that support decentralized adoption:
+
+```math
+U_{\mathrm{decent}}
+  =
+  \{\text{reduced founder authority, reduced central target,
+    reduced sell-pressure signal}\}.
+```
+
+The non-adoptive face records what is not taken up by the main output:
+
+```math
+D_{\mathrm{fame/wealth}}
+  =
+  \{\text{public fame, founder control, direct realization of early
+    coin wealth}\}.
+```
+
+The relevant boundary-visible relation may be written schematically as
+
+```math
+U_{\mathrm{decent}}
+  \mathrel{\leadsto_{\mathsf{USD}}}
+  D_{\mathrm{fame/wealth}}.
+```
+
+This does not say that fame and wealth were morally rejected, nor that a particular person had a proved intention. It says that, in the joint social-economic carrier, decentralized adoption can be modeled as boundary-visible only when founder fame, founder control, and direct realization of early coin wealth remain non-adopted residue.
+
+A conservative best-effort policy can be expressed by assigning each action $`a\in\mathcal A`$ a social cost and an economic cost,
+
+```math
+C_{\mathcal S}(a),\qquad C_{\mathcal E}(a),
+```
+
+and selecting an action whose worst visible cost is minimal:
+
+```math
+a^*
+  \in
+  \operatorname*{arg\,min}_{a\in\mathcal A}
+  \max\{C_{\mathcal S}(a),C_{\mathcal E}(a)\}.
+```
+
+Under one plausible policy, withdrawal together with non-movement of the early coins is a candidate for $`a^*`$. It reduces the social risk of a founder becoming a central authority or legal target and reduces the economic risk of a large sell-pressure signal. The loss is not erased: the abandoned fame, unresolved identity, and unrealized wealth remain as self-anchored residue attached to the record.
+
+<div class="remark">
+
+**Remark 61** (No proof of Satoshi’s intention). The Satoshi test licenses at most a structural conclusion: withdrawal and coin non-movement can be modeled as a best-effort stable record for Bitcoin’s social and economic decentralization. It does not license the USD-free assertion that Satoshi chose withdrawal for that reason. The inner intention, the exact identity, and the exact status of the early coins remain non-adopted residue unless supplied by independent historical evidence and an explicit descent license.
+
+</div>
+
+### Oppenheimer test
+
+The Oppenheimer test is an interdisciplinary stress test for ethical translation. Its source data use only two categories: a category of theoretical nuclear physics and a category of public policy. The philosophical forum and the trial of Socrates are not assumed as source categories. They appear only after the USD record has been compressed, lowered, cut, stabilized, turned over, and imaged upward.
+
+Historically, the Manhattan Project made nuclear fission and explosive chain reactions into an organized weapon program. The Smyth Report describes the scientific and administrative development of atomic energy for military purposes . The Franck Report records that some project scientists understood the use of the first atomic bombs as a social and political problem, not merely a technical one . Plato’s *Apology* records the trial in which Socrates’ public practice of examination was answered by charges of corrupting the youth and impiety . The USD claim below is not that these events are historically the same. It is that the Oppenheimer record can be transformed, without dropping the decisive gap, into the forum structure made visible by the trial of Socrates.
+
+Let
+
+```math
+\mathcal T_{\mathrm{nuc}}
+```
+
+be a category of theoretical nuclear-physics records. Its objects may be fission models, chain-reaction calculations, criticality estimates, yield predictions, uncertainty bounds, or experimental confirmations. Its morphisms are refinements, derivations, approximations, empirical constraints, or transitions from speculative theory to reliable prediction. Let
+
+```math
+\mathcal P_{\mathrm{pub}}
+```
+
+be a category of public-policy records. Its objects may be nonresearch, research, secret development, demonstration, military use, nonuse, international control, or postwar governance. Its morphisms are funding, authorization, classification, command, deployment, diplomatic proposal, or legal constraint.
+
+The two categories touch through a feasibility profunctor
+
+```math
+\Theta_{\mathrm{Op}}:
+  \mathcal T_{\mathrm{nuc}}^{\mathrm{op}}\times
+  \mathcal P_{\mathrm{pub}}
+  \to \mathbf{Pos}.
+```
+
+An element
+
+```math
+\theta\in\Theta_{\mathrm{Op}}(t,p)
+```
+
+is a witness that a theoretical record $`t`$ makes a policy record $`p`$ available, urgent, dangerous, or governable. Such a witness may record technical feasibility, predictability, destructive scale, uncertainty, time pressure, enemy-access risk, secrecy, irreversibility, or accountability. The interface category is the Grothendieck construction
+
+```math
+\mathcal I_{\Theta}
+  \mathrel{:=}
+  \int_{\mathcal T_{\mathrm{nuc}}^{\mathrm{op}}\times
+        \mathcal P_{\mathrm{pub}}}
+  \Theta_{\mathrm{Op}},
+```
+
+whose objects are triples $`(t,p,\theta)`$. This interface is the exact place where theoretical success becomes a public-policy option.
+
+**C-step.** Let $`\mathbb H_T`$ be a USD record over $`\mathcal T_{\mathrm{nuc}}`$ and let $`\mathbb H_P`$ be a USD record over $`\mathcal P_{\mathrm{pub}}`$. Compression along the interface gives an Oppenheimer record
+
+```math
+\mathbb O
+  \mathrel{:=}
+  \mathsf{CComp}_{\mathcal I_{\Theta}}(\mathbb H_T,\mathbb H_P).
+```
+
+The compression does not identify theory with policy. It only records that the two sides now share a boundary witness: the same nuclear-physics result that counts as explanatory success in $`\mathcal T_{\mathrm{nuc}}`$ also counts as a possible state action in $`\mathcal P_{\mathrm{pub}}`$.
+
+**D-step.** Lowering $`\mathbb O`$ extracts the theory-practice shape. The lowered carrier forgets the details of isotopes, laboratories, committees, and military offices, but retains the typed collision
+
+```math
+\text{possible}
+  \;\Longrightarrow\;
+  \text{must decide whether it ought to be done}.
+```
+
+This is sharper than the slogan that can does not imply ought. The lowered record says that can creates a decision burden. A theory may remain epistemic in its own category, but after contact with public policy it generates an actionable option for which someone becomes answerable.
+
+**E-step.** To avoid a leap from theory to guilt, insert an internal cut vertex
+
+```math
+m_{\mathrm{act}}
+  =
+  \text{actionability}.
+```
+
+The Oppenheimer record is subdivided as
+
+```math
+\mathsf{EComp}_{m_{\mathrm{act}}}(\mathbb O)
+  =
+  (\mathbb O_{\mathrm{possible},m_{\mathrm{act}}},
+   \mathbb O_{m_{\mathrm{act}},\mathrm{responsible}};
+   \varepsilon_{m_{\mathrm{act}}}).
+```
+
+The first half records the passage from theoretical possibility to available state action. The second half records the passage from available state action to responsibility for irreversible consequences. Thus the ethical problem is not imported from outside physics or outside policy. It is produced at the cut where a prediction becomes an implementable public act.
+
+**S-step.** The stable Oppenheimer molecule is
+
+```math
+\mathrm{SMol}_{\mathrm{Op}}
+  \mathrel{:=}
+  \mathrm{SMol}
+  (\mathbb H_T,\mathbb H_P;\Delta_{\mathrm{Op}}^*).
+```
+
+Its adoptive theoretical face is
+
+```math
+U_{\mathrm{theory}}
+  =
+  \{\text{truth, prediction, possibility, technical control}\},
+```
+
+while its non-adoptive public-policy face is
+
+```math
+D_{\mathrm{practice}}
+  =
+  \{\text{harm, authority, secrecy, irreversibility,
+    accountability}\}.
+```
+
+The interlock is boundary-visible:
+
+```math
+U_{\mathrm{theory}}
+  \mathrel{\leadsto_{\mathsf{USD}}}
+  D_{\mathrm{practice}}.
+```
+
+The fixed gap is not zero. It is the stable discrepancy
+
+```math
+\begin{aligned}
+  \Delta_{\mathrm{Op}}^*
+  &=
+  \text{the stable gap between theoretical success}\\
+  &\quad\text{and ethically non-neutral public action}.
+\end{aligned}
+```
+
+The residue contains both sides of the policy dilemma: use may create direct and irreversible destruction, while nonuse, delay, demonstration, or secrecy may leave war, arms-race, or governance risks unresolved. The molecule therefore preserves the dilemma instead of resolving it.
+
+**T-step.** Temporal turnover reverses the reading of the record. Forward, the Oppenheimer molecule reads:
+
+```math
+\text{theory discovers possibility}
+  \longrightarrow
+  \text{policy must decide action}.
+```
+
+Turned over, it reads:
+
+```math
+\text{public consequence}
+  \longrightarrow
+  \text{theoretical practice is judged by what it enabled}.
+```
+
+The turned record has the same carrier gap, but its vocabulary can now be read as a forum problem. In the forum normal form, theoretical discovery is replaced by contradiction discovery, and public-policy action is replaced by public authority over the speaker:
+
+```math
+\text{contradiction is found}
+  \;\Longrightarrow\;
+  \text{the forum must decide whether to rewind or expel}.
+```
+
+This is the no-rewind forum dilemma. A truth-seeking argument treats contradiction as a repair point. An authority-protecting forum may treat the same contradiction as disqualification. The boundary witness is the same shape as in the Oppenheimer molecule: a successful epistemic act creates an irreversible practical burden.
+
+**U-step.** The upward image of the turned record is the Socratic trial schema:
+
+```math
+\mathsf{UComp}(\mathsf{TComp}(\mathrm{SMol}_{\mathrm{Op}}))
+  \leadsto
+  \mathrm{Trial}_{\mathrm{Socrates}}.
+```
+
+In this image, the theoretical side becomes Socratic examination: questions expose contradictions and force interlocutors back to their premises. The public-policy side becomes the authority of the Athenian forum: the city can treat the exposed instability not as an invitation to rewind the argument, but as corruption, impiety, or civic danger. The mapping is:
+
+```math
+\begin{array}{ccl}
+  \text{nuclear possibility} &\mapsto& \text{exposed contradiction},\\
+  \text{state action} &\mapsto& \text{public judgment},\\
+  \text{irreversible use} &\mapsto& \text{irreversible punishment},\\
+  \text{policy responsibility} &\mapsto& \text{forum authority},\\
+  \text{unresolved residue} &\mapsto& \text{loss of rewind rights}.
+\end{array}
+```
+
+The transformation is therefore not a metaphorical jump from physics to Athens. It passes through the common S-molecular form:
+
+```math
+\text{epistemic success}
+  \mathrel{\leadsto_{\mathsf{USD}}}
+  \text{practical authority over irreversible consequence}.
+```
+
+
+
+<div class="remark">
+
+**Remark 62** (No proof of historical identity). The Oppenheimer test licenses a structural comparison, not a USD-free historical identity. It does not say that Oppenheimer was Socrates, that the Manhattan Project was a trial, or that Athenian law and nuclear policy were the same institution. It says that both records can realize the same no-rewind pattern: a practice whose internal norm is correction by truth is recoded by public authority as a source of irreversible judgment. Any stronger historical or moral conclusion requires an explicit descent license.
+
+</div>
 
 ## Reviewer-facing checklist
 
@@ -1103,7 +1758,9 @@ q=(r,\pi):\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C\times\mathsf{St}.
 
 The six composition operations are typed APIs backed by ordinary categorical constructions or explicit existence assumptions, and each operation is defined only when it preserves the stance-lift invariant through $`q`$. The resulting system can guide interpretation and proof search while remaining conservative over the base language for USD-free conclusions.
 
-<span>9</span>
+<div class="thebibliography">
+
+99
 
 Saunders Mac Lane. *Categories for the Working Mathematician*. Springer, 1971.
 
@@ -1115,6 +1772,24 @@ Alexander Grothendieck. Revêtements ètales et groupe fondamental. In *SGA 1*, 
 
 Alfred Tarski. A lattice-theoretical fixpoint theorem and its applications. *Pacific Journal of Mathematics*, 5(2):285–309, 1955.
 
+Isaac Newton. *Philosophiæ Naturalis Principia Mathematica*. .
+
 Albert Einstein. Zur Elektrodynamik bewegter Körper. *Annalen der Physik*, 322(10):891–921, 1905.
 
 Albert Einstein. Die Grundlage der allgemeinen Relativitätstheorie. *Annalen der Physik*, 354(7):769–822, 1916.
+
+Henry DeWolf Smyth. *Atomic Energy for Military Purposes*. Princeton University Press, 1945. <https://www.osti.gov/opennet/manhattan-project-history/publications/smyth_report.pdf>.
+
+James Franck et al. The Franck Report: A Report to the Secretary of War. June 1945. <https://sgp.fas.org/eprint/franck.html>.
+
+Plato. *Apology*. Translated by Benjamin Jowett. Project Gutenberg. <https://www.gutenberg.org/ebooks/1656>.
+
+Satoshi Nakamoto. Bitcoin: A Peer-to-Peer Electronic Cash System. . <https://bitcoin.org/bitcoin.pdf>.
+
+Satoshi Nakamoto. Re: Wikileaks contact info? BitcoinTalk, December 5, 2010. Archived by the Satoshi Nakamoto Institute: <https://satoshi.nakamotoinstitute.org/posts/bitcointalk/523/>.
+
+Satoshi Nakamoto. Added some DoS limits, removed safe mode (0.3.19). BitcoinTalk, December 12, 2010. Archived by the Satoshi Nakamoto Institute: <https://satoshi.nakamotoinstitute.org/posts/bitcointalk/543/>.
+
+BitMEX Research. Does Satoshi have a million bitcoin? August 20, 2018. <https://www.bitmex.com/blog/satoshis-1-million-bitcoin>.
+
+</div>
