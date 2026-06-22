@@ -88,11 +88,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
 
       - name: Compile PDF and README
         shell: bash
@@ -109,8 +106,7 @@ jobs:
             texlive-latex-recommended \
             texlive-pictures
 
-          npm ci
-          npm run compile
+          deno run -A scripts/compile.ts
 
       - name: Commit compiled artifacts
         id: compiled_artifacts
