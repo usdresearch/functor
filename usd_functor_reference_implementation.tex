@@ -1464,6 +1464,232 @@ coins remain non-adopted residue unless supplied by independent historical
 evidence and an explicit descent license.
 \end{remark}
 
+\subsection{Oppenheimer test}
+
+The Oppenheimer test is an interdisciplinary stress test for ethical
+translation.  Its source data use only two categories: a category of
+theoretical nuclear physics and a category of public policy.  The
+philosophical forum and the trial of Socrates are not assumed as source
+categories.  They appear only after the USD record has been compressed,
+lowered, cut, stabilized, turned over, and imaged upward.
+
+Historically, the Manhattan Project made nuclear fission and explosive
+chain reactions into an organized weapon program.  The Smyth Report
+describes the scientific and administrative development of atomic energy
+for military purposes \cite{Smyth1945}.  The Franck Report records that
+some project scientists understood the use of the first atomic bombs as a
+social and political problem, not merely a technical one
+\cite{Franck1945}.  Plato's \emph{Apology} records the trial in which
+Socrates' public practice of examination was answered by charges of
+corrupting the youth and impiety \cite{PlatoApology}.  The USD claim
+below is not that these events are historically the same.  It is that
+the Oppenheimer record can be transformed, without dropping the decisive
+gap, into the forum structure made visible by the trial of Socrates.
+
+Let
+\[
+  \mathcal T_{\mathrm{nuc}}
+\]
+be a category of theoretical nuclear-physics records.  Its objects may be
+fission models, chain-reaction calculations, criticality estimates,
+yield predictions, uncertainty bounds, or experimental confirmations.
+Its morphisms are refinements, derivations, approximations, empirical
+constraints, or transitions from speculative theory to reliable
+prediction.  Let
+\[
+  \mathcal P_{\mathrm{pub}}
+\]
+be a category of public-policy records.  Its objects may be nonresearch,
+research, secret development, demonstration, military use, nonuse,
+international control, or postwar governance.  Its morphisms are funding,
+authorization, classification, command, deployment, diplomatic proposal,
+or legal constraint.
+
+The two categories touch through a feasibility profunctor
+\[
+  \Theta_{\mathrm{Op}}:
+  \mathcal T_{\mathrm{nuc}}^{\op}\times
+  \mathcal P_{\mathrm{pub}}
+  \to \Pos.
+\]
+An element
+\[
+  \theta\in\Theta_{\mathrm{Op}}(t,p)
+\]
+is a witness that a theoretical record $t$ makes a policy record $p$
+available, urgent, dangerous, or governable.  Such a witness may record
+technical feasibility, predictability, destructive scale, uncertainty,
+time pressure, enemy-access risk, secrecy, irreversibility, or
+accountability.  The interface category is the Grothendieck construction
+\[
+  \mathcal I_{\Theta}
+  \defeq
+  \int_{\mathcal T_{\mathrm{nuc}}^{\op}\times
+        \mathcal P_{\mathrm{pub}}}
+  \Theta_{\mathrm{Op}},
+\]
+whose objects are triples $(t,p,\theta)$.  This interface is the exact
+place where theoretical success becomes a public-policy option.
+
+\textbf{C-step.}  Let $\mathbb H_T$ be a USD record over
+$\mathcal T_{\mathrm{nuc}}$ and let $\mathbb H_P$ be a USD record over
+$\mathcal P_{\mathrm{pub}}$.  Compression along the interface gives an
+Oppenheimer record
+\[
+  \mathbb O
+  \defeq
+  \CComp_{\mathcal I_{\Theta}}(\mathbb H_T,\mathbb H_P).
+\]
+The compression does not identify theory with policy.  It only records
+that the two sides now share a boundary witness: the same nuclear-physics
+result that counts as explanatory success in $\mathcal T_{\mathrm{nuc}}$
+also counts as a possible state action in $\mathcal P_{\mathrm{pub}}$.
+
+\textbf{D-step.}  Lowering $\mathbb O$ extracts the theory-practice
+shape.  The lowered carrier forgets the details of isotopes, laboratories,
+committees, and military offices, but retains the typed collision
+\[
+  \text{possible}
+  \;\Longrightarrow\;
+  \text{must decide whether it ought to be done}.
+\]
+This is sharper than the slogan that can does not imply ought.  The
+lowered record says that can creates a decision burden.  A theory may
+remain epistemic in its own category, but after contact with public
+policy it generates an actionable option for which someone becomes
+answerable.
+
+\textbf{E-step.}  To avoid a leap from theory to guilt, insert an
+internal cut vertex
+\[
+  m_{\mathrm{act}}
+  =
+  \text{actionability}.
+\]
+The Oppenheimer record is subdivided as
+\[
+  \EComp_{m_{\mathrm{act}}}(\mathbb O)
+  =
+  (\mathbb O_{\mathrm{possible},m_{\mathrm{act}}},
+   \mathbb O_{m_{\mathrm{act}},\mathrm{responsible}};
+   \varepsilon_{m_{\mathrm{act}}}).
+\]
+The first half records the passage from theoretical possibility to
+available state action.  The second half records the passage from
+available state action to responsibility for irreversible consequences.
+Thus the ethical problem is not imported from outside physics or outside
+policy.  It is produced at the cut where a prediction becomes an
+implementable public act.
+
+\textbf{S-step.}  The stable Oppenheimer molecule is
+\[
+  \operatorname{SMol}_{\mathrm{Op}}
+  \defeq
+  \operatorname{SMol}
+  (\mathbb H_T,\mathbb H_P;\Delta_{\mathrm{Op}}^*).
+\]
+Its adoptive theoretical face is
+\[
+  U_{\mathrm{theory}}
+  =
+  \{\text{truth, prediction, possibility, technical control}\},
+\]
+while its non-adoptive public-policy face is
+\[
+  D_{\mathrm{practice}}
+  =
+  \{\text{harm, authority, secrecy, irreversibility,
+    accountability}\}.
+\]
+The interlock is boundary-visible:
+\[
+  U_{\mathrm{theory}}
+  \uconn
+  D_{\mathrm{practice}}.
+\]
+The fixed gap is not zero.  It is the stable discrepancy
+\[
+\begin{aligned}
+  \Delta_{\mathrm{Op}}^*
+  &=
+  \text{the stable gap between theoretical success}\\
+  &\quad\text{and ethically non-neutral public action}.
+\end{aligned}
+\]
+The residue contains both sides of the policy dilemma: use may create
+direct and irreversible destruction, while nonuse, delay, demonstration,
+or secrecy may leave war, arms-race, or governance risks unresolved.
+The molecule therefore preserves the dilemma instead of resolving it.
+
+\textbf{T-step.}  Temporal turnover reverses the reading of the record.
+Forward, the Oppenheimer molecule reads:
+\[
+  \text{theory discovers possibility}
+  \longrightarrow
+  \text{policy must decide action}.
+\]
+Turned over, it reads:
+\[
+  \text{public consequence}
+  \longrightarrow
+  \text{theoretical practice is judged by what it enabled}.
+\]
+The turned record has the same carrier gap, but its vocabulary can now be
+read as a forum problem.  In the forum normal form, theoretical discovery
+is replaced by contradiction discovery, and public-policy action is
+replaced by public authority over the speaker:
+\[
+  \text{contradiction is found}
+  \;\Longrightarrow\;
+  \text{the forum must decide whether to rewind or expel}.
+\]
+This is the no-rewind forum dilemma.  A truth-seeking argument treats
+contradiction as a repair point.  An authority-protecting forum may treat
+the same contradiction as disqualification.  The boundary witness is the
+same shape as in the Oppenheimer molecule: a successful epistemic act
+creates an irreversible practical burden.
+
+\textbf{U-step.}  The upward image of the turned record is the Socratic
+trial schema:
+\[
+  \UComp(\TComp(\operatorname{SMol}_{\mathrm{Op}}))
+  \leadsto
+  \mathrm{Trial}_{\mathrm{Socrates}}.
+\]
+In this image, the theoretical side becomes Socratic examination:
+questions expose contradictions and force interlocutors back to their
+premises.  The public-policy side becomes the authority of the Athenian
+forum: the city can treat the exposed instability not as an invitation to
+rewind the argument, but as corruption, impiety, or civic danger.  The
+mapping is:
+\[
+\begin{array}{ccl}
+  \text{nuclear possibility} &\mapsto& \text{exposed contradiction},\\
+  \text{state action} &\mapsto& \text{public judgment},\\
+  \text{irreversible use} &\mapsto& \text{irreversible punishment},\\
+  \text{policy responsibility} &\mapsto& \text{forum authority},\\
+  \text{unresolved residue} &\mapsto& \text{loss of rewind rights}.
+\end{array}
+\]
+The transformation is therefore not a metaphorical jump from physics to
+Athens.  It passes through the common S-molecular form:
+\[
+  \text{epistemic success}
+  \uconn
+  \text{practical authority over irreversible consequence}.
+\]
+
+\begin{remark}[No proof of historical identity]
+The Oppenheimer test licenses a structural comparison, not a USD-free
+historical identity.  It does not say that Oppenheimer was Socrates, that
+the Manhattan Project was a trial, or that Athenian law and nuclear
+policy were the same institution.  It says that both records can realize
+the same no-rewind pattern: a practice whose internal norm is correction
+by truth is recoded by public authority as a source of irreversible
+judgment.  Any stronger historical or moral conclusion requires an
+explicit descent license.
+\end{remark}
+
 % -----------------------------------------------------------------------------
 \section{Reviewer-facing checklist}
 % -----------------------------------------------------------------------------
@@ -1573,6 +1799,25 @@ Albert Einstein.
 Albert Einstein.
 \newblock Die Grundlage der allgemeinen Relativit\"atstheorie.
 \newblock \emph{Annalen der Physik}, 354(7):769--822, 1916.
+
+\bibitem{Smyth1945}
+Henry DeWolf Smyth.
+\newblock \emph{Atomic Energy for Military Purposes}.
+\newblock Princeton University Press, 1945.
+\newblock \url{https://www.osti.gov/opennet/manhattan-project-history/publications/smyth_report.pdf}.
+
+\bibitem{Franck1945}
+James Franck et al.
+\newblock The Franck Report: A Report to the Secretary of War.
+\newblock June 1945.
+\newblock \url{https://sgp.fas.org/eprint/franck.html}.
+
+\bibitem{PlatoApology}
+Plato.
+\newblock \emph{Apology}.
+\newblock Translated by Benjamin Jowett.
+\newblock Project Gutenberg.
+\newblock \url{https://www.gutenberg.org/ebooks/1656}.
 
 \bibitem{Nakamoto2008}
 Satoshi Nakamoto.
