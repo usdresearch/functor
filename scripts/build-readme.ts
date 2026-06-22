@@ -150,31 +150,53 @@ async function runPandoc(inputPath: string, outputPath: string) {
 }
 
 function normalizeGithubMath(markdown: string) {
-  const segments = markdown.split(/(^```[\s\S]*?^```$)/gm);
+  return mapNonFenceSegments(markdown, normalizeGithubMathSegment);
+}
 
-  return segments.map((segment) => {
+function mapNonFenceSegments(
+  markdown: string,
+  normalizeSegment: (segment: string) => string,
+) {
+  return markdown.split(/(^```[\s\S]*?^```$)/gm).map((segment) => {
     if (segment.startsWith("```")) {
       return segment;
     }
 
-    return segment
-      .replace(/\\\[((?:.|\n)*?)\\\]/g, (_match, math) => {
-        return `\n\n\`\`\`math\n${
-          normalizeGithubMathContent(math.trim())
-        }\n\`\`\`\n\n`;
-      })
-      .replace(/\\\((.*?)\\\)/g, (_match, math) => {
-        const trimmedMath = normalizeGithubMathContent(math.trim());
-
-        if (trimmedMath.includes("`")) {
-          return `$${trimmedMath}$`;
-        }
-
-        return "$`" + trimmedMath + "`$";
-      })
-      .replace(/[ \t]+\n\n```math/g, "\n\n```math")
-      .replace(/```\n\n[ \t]+/g, "```\n\n");
+    return normalizeSegment(segment);
   }).join("");
+}
+
+function normalizeGithubMathSegment(segment: string) {
+  const displayNormalized = segment
+    .replace(/\$\$([\s\S]*?)\$\$/g, (_match, math) => displayMath(math))
+    .replace(/\\\[((?:.|\n)*?)\\\]/g, (_match, math) => displayMath(math))
+    .replace(/[ \t]+\n\n```math/g, "\n\n```math")
+    .replace(/```\n\n[ \t]+/g, "```\n\n");
+
+  return mapNonFenceSegments(displayNormalized, (inlineSegment) => {
+    return inlineSegment
+      .replace(/\$`([^`\n]+)`\$/g, (_match, math) => inlineMath(math))
+      .replace(/(^|[^$])\$([^$\n]+)\$(?!\$)/g, (_match, prefix, math) => {
+        return `${prefix}${inlineMath(math)}`;
+      })
+      .replace(/\\\((.*?)\\\)/g, (_match, math) => inlineMath(math));
+  });
+}
+
+function displayMath(math: string) {
+  return `\n\n\`\`\`math\n${
+    normalizeGithubMathContent(math.trim())
+  }\n\`\`\`\n\n`;
+}
+
+function inlineMath(math: string) {
+  const normalizedMath = normalizeGithubMathContent(math.trim());
+
+  if (normalizedMath.includes("`")) {
+    return `$${normalizedMath}$`;
+  }
+
+  return "$`" + normalizedMath + "`$";
 }
 
 function normalizeGithubMathContent(math: string) {
