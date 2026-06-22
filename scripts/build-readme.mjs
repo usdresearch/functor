@@ -8,7 +8,6 @@ import { spawnSync } from 'node:child_process';
 const [texArg = 'usd_functor_reference_implementation.tex', outputArg = 'README.md'] = process.argv.slice(2);
 const texPath = resolve(texArg);
 const outputPath = resolve(outputArg);
-const filterPath = resolve('.github/pandoc/mathml-gfm.lua');
 const tex = readFileSync(texPath, 'utf8');
 const today = new Intl.DateTimeFormat('en-US', {
   month: 'long',
@@ -138,8 +137,7 @@ function runPandoc(inputPath, outputPath) {
   const result = spawnSync('pandoc', [
     inputPath,
     '--from=latex',
-    '--to=gfm+raw_html',
-    `--lua-filter=${filterPath}`,
+    '--to=gfm',
     '--wrap=none',
     '--output',
     outputPath,
@@ -154,6 +152,32 @@ function runPandoc(inputPath, outputPath) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+}
+
+function normalizeGithubMath(markdown) {
+  const segments = markdown.split(/(^```[\s\S]*?^```$)/gm);
+
+  return segments.map((segment) => {
+    if (segment.startsWith('```')) {
+      return segment;
+    }
+
+    return segment
+      .replace(/\\\[((?:.|\n)*?)\\\]/g, (_match, math) => {
+        return `\n\n\`\`\`math\n${math.trim()}\n\`\`\`\n\n`;
+      })
+      .replace(/\\\((.*?)\\\)/g, (_match, math) => {
+        const trimmedMath = math.trim();
+
+        if (trimmedMath.includes('`')) {
+          return `$${trimmedMath}$`;
+        }
+
+        return '$`' + trimmedMath + '`$';
+      })
+      .replace(/[ \t]+\n\n```math/g, '\n\n```math')
+      .replace(/```\n\n[ \t]+/g, '```\n\n');
+  }).join('');
 }
 
 function shiftHeadings(markdown, levels) {
@@ -240,8 +264,8 @@ try {
   runPandoc(abstractTexPath, abstractMarkdownPath);
   runPandoc(bodyTexPath, bodyMarkdownPath);
 
-  const abstractMarkdown = readFileSync(abstractMarkdownPath, 'utf8').trim();
-  const bodyMarkdown = shiftHeadings(readFileSync(bodyMarkdownPath, 'utf8').trim(), 1);
+  const abstractMarkdown = normalizeGithubMath(readFileSync(abstractMarkdownPath, 'utf8').trim());
+  const bodyMarkdown = normalizeGithubMath(shiftHeadings(readFileSync(bodyMarkdownPath, 'utf8').trim(), 1));
   const contents = buildContents(bodyMarkdown);
   const readme = `# ${title}
 
