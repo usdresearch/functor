@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Detect unpublished commits
+      - name: Detect unpublished TeX changes
         id: detect
         shell: bash
         run: |
@@ -36,22 +36,32 @@ jobs:
 
           last_tag="$(git describe --tags --match 'hourly-publish/*' --abbrev=0 HEAD 2>/dev/null || true)"
           last_commit=""
+          changed_tex_files=""
+          commit_count="0"
 
           if [[ -n "$last_tag" ]]; then
             last_commit="$(git rev-list -n 1 "$last_tag")"
           fi
 
-          if [[ -n "$last_commit" && "$last_commit" == "$GITHUB_SHA" ]]; then
+          if [[ -n "$last_commit" ]]; then
+            changed_tex_files="$(git diff --name-only "${last_commit}..HEAD" -- '*.tex')"
+
+            if [[ -n "$changed_tex_files" ]]; then
+              commit_count="$(git log --format='%H' "${last_commit}..HEAD" -- '*.tex' | wc -l | tr -d ' ')"
+            fi
+          else
+            changed_tex_files="$(git ls-files '*.tex')"
+
+            if [[ -n "$changed_tex_files" ]]; then
+              commit_count="$(git log --format='%H' -- '*.tex' | wc -l | tr -d ' ')"
+            fi
+          fi
+
+          if [[ -z "$changed_tex_files" ]]; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "last_tag=$last_tag" >> "$GITHUB_OUTPUT"
             echo "commit_count=0" >> "$GITHUB_OUTPUT"
             exit 0
-          fi
-
-          if [[ -n "$last_commit" ]]; then
-            commit_count="$(git rev-list --count "${last_commit}..HEAD")"
-          else
-            commit_count="$(git rev-list --count HEAD)"
           fi
 
           echo "has_changes=true" >> "$GITHUB_OUTPUT"
@@ -64,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Skip publication
-        run: echo "No commits since ${{ needs.changes.outputs.last_tag }}; nothing to publish."
+        run: echo "No TeX changes since ${{ needs.changes.outputs.last_tag }}; nothing to publish."
 
   publish:
     needs: changes
@@ -78,6 +88,42 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Compile PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          sudo apt-get update
+          sudo apt-get install -y \
+            latexmk \
+            texlive-fonts-recommended \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-latex-recommended \
+            texlive-pictures
+
+          latexmk -pdf -interaction=nonstopmode -halt-on-error usd_functor_reference_implementation.tex
+          latexmk -c usd_functor_reference_implementation.tex
+
+      - name: Commit compiled PDF
+        id: compiled_pdf
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- usd_functor_reference_implementation.pdf; then
+            echo "PDF is already up to date."
+            echo "publish_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add usd_functor_reference_implementation.pdf
+          git commit -m "Compile PDF from TeX"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "publish_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -97,10 +143,11 @@ jobs:
         env:
           COMMIT_COUNT: ${{ needs.changes.outputs.commit_count }}
           LAST_TAG: ${{ needs.changes.outputs.last_tag }}
+          PUBLISH_SHA: ${{ steps.compiled_pdf.outputs.publish_sha }}
         run: |
           set -euo pipefail
 
-          short_sha="${GITHUB_SHA::7}"
+          short_sha="${PUBLISH_SHA::7}"
           tag_name="hourly-publish/$(date -u +'%Y%m%d%H%M%S')-${short_sha}"
           title="Hourly publish ${short_sha}"
 
@@ -111,11 +158,11 @@ jobs:
           fi
 
           {
-            echo "Published from commit ${GITHUB_SHA}."
+            echo "Published from commit ${PUBLISH_SHA}."
             echo
-            echo "Commits included: ${COMMIT_COUNT}"
+            echo "TeX commits included: ${COMMIT_COUNT}"
             echo
-            git log --format='- %s (%h)' "$log_range"
+            git log --format='- %s (%h)' "$log_range" -- '*.tex'
           } > release_notes.md
 
           echo "tag_name=$tag_name" >> "$GITHUB_OUTPUT"
@@ -126,8 +173,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.release.outputs.tag_name }}" \
-            usd_functor_reference_implementation.pdf \
             usd_functor_reference_implementation.tex \
-            --target "$GITHUB_SHA" \
+            --target "${{ steps.compiled_pdf.outputs.publish_sha }}" \
             --title "${{ steps.release.outputs.title }}" \
             --notes-file release_notes.md
