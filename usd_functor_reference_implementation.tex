@@ -901,6 +901,271 @@ anchored local records.  The second stabilizes a shared gap, turns the
 record chain upside down, and then images the result upward.
 
 % -----------------------------------------------------------------------------
+\section{S-molecules and residue-stable sideways composites}
+% -----------------------------------------------------------------------------
+
+The preceding APIs define how USD records may be composed.  We now record
+one derived notion that will be useful in examples: an \(S\)-molecule.
+The term is intentionally internal to USD theory.  It does not mean a
+chemical molecule unless a separate physical realization or descent
+license is supplied.
+
+\begin{definition}[U/D interlock]
+Let \(A\) and \(B\) be compatible USD records or USD functors.  A
+U/D interlock between \(A\) and \(B\) is boundary-visible data witnessing
+that the adoptive face of each side can be read against the non-adoptive
+face of the other side.  In notation, this is recorded as
+\[
+  U_A \uconn D_B,
+  \qquad
+  U_B \uconn D_A,
+\]
+together with the relevant boundary witnesses and coherence data.
+The symbol \(\uconn\) is not equality.  It records a boundary-visible
+connection between stance-lifted records over their realized carriers.
+\end{definition}
+
+\begin{definition}[S-molecule]
+Let \(A\) and \(B\) be compatible USD records or USD functors.  Assume a
+complete gap lattice
+\[
+  \Lambda_{A,B}
+\]
+and a monotone sideways update map
+\[
+  \Phi_{A,B}:\Lambda_{A,B}\to\Lambda_{A,B}.
+\]
+An \(S\)-molecule between \(A\) and \(B\) is a sideways-stabilized record
+\[
+  \operatorname{SMol}(A,B;\Delta^*)
+\]
+consisting of a fixed point
+\[
+  \Delta^*=\Phi_{A,B}(\Delta^*)
+\]
+together with a U/D interlock between \(A\) and \(B\), such that the fixed
+gap \(\Delta^*\) is preserved by the U-face, D-face, boundary witness,
+and coherence contract of the resulting sideways composite.
+
+Thus an \(S\)-molecule is not the collapse of \(A\) and \(B\) into one
+identity.  It is a USD composite in which two distinguishable sides keep
+a shared stable discrepancy and become observable as one composite record.
+\end{definition}
+
+\begin{remark}[Meaning of molecule]
+The word ``molecule'' is used here by analogy with stable composite
+entities.  A physical covalent molecule, a polymer, a software package
+dependency cluster, or a social institution may be modeled as an
+\(S\)-molecule only after specifying an interpretation of \(A\), \(B\),
+the gap lattice, the update map, and the relevant boundary witnesses.
+Without such an interpretation, \(\operatorname{SMol}(A,B;\Delta^*)\) is
+only a USD record.
+\end{remark}
+
+\begin{definition}[Positive-negative exchange]
+Let \(\star\) be one of the USD composition APIs, whenever its input data
+are compatible.  A positive-negative exchange datum, or PN-exchange
+datum, for a composition instance consists of an estimated gain
+\[
+  \widehat G_{\star}
+\]
+and an estimated loss
+\[
+  \widehat L_{\star}.
+\]
+The estimated gain is the portion of the composition adopted by the main
+output record.  The estimated loss is not erased.  It is recorded as
+non-adopted residue attached to the output.
+
+Accordingly, a residue-aware USD composition returns not only a main
+composite \(\mathbb M_{\star}\), but also a second USD functor
+\[
+  \mathbb W_{\star}:\mathbb M_{\star}\Rightarrow_{\USD}\mathbb M_{\star},
+\]
+called the self-anchored residue functor.  Thus the output shape is
+\[
+  \star(\text{input data})
+  =
+  \bigl(\mathbb M_{\star},\mathbb W_{\star}\bigr).
+\]
+The residue functor stores the loss, discrepancy, non-adoption, delay,
+and boundary-visible waste that the main composite does not adopt.
+\end{definition}
+
+\begin{definition}[PN-conservation]
+Let
+\[
+  \mathsf{Qty}:\Smart_{\USD}(\mathcal X,\mathcal C)\to\mathcal R
+\]
+be a USD quantity valuation into an ordered commutative monoid
+\(\mathcal R\).  A PN-exchange datum is conservative when
+\[
+  \mathsf{Qty}(\text{input records})
+  =
+  \mathsf{Qty}(\mathbb M_{\star})
+  +
+  \mathsf{Qty}(\mathbb W_{\star}).
+\]
+Thus USD quantity is not destroyed by composition.  What is not adopted
+by the main composite remains as a self-anchored residue functor.
+\end{definition}
+
+\begin{remark}[Why residue is part of the composition]
+Without the residue functor, a USD composition may look as if the
+unadopted part of the interaction has disappeared.  The PN-exchange
+policy prevents this.  It makes every loss or mismatch accountable either
+inside the main composite or inside its self-anchored residue.
+This is consistent with the conservative design of USD theory: unadopted
+records are not silently converted into USD-free conclusions.
+\end{remark}
+
+\begin{definition}[UD-spin]
+Let
+\[
+  \mathbb M=\operatorname{SMol}(A,B;\Delta^*)
+\]
+be an \(S\)-molecule, and let \(\xi\) be an external perturbation, force,
+load, attack, or environmental input applied to \(\mathbb M\).  A
+UD-spin generated by \(\xi\) is a finite or eventually stationary
+internal update sequence
+\[
+  S_0\to S_1\to\cdots\to S_n
+\]
+in which the perturbation circulates between the U-face and D-face of
+\(\mathbb M\) before being absorbed, recorded as residue, or ejected
+through a boundary-visible residue functor.
+
+UD-spin is a USD bookkeeping operation.  It is not physical spin unless a
+separate physical model identifies it with a physical spin-like quantity.
+\end{definition}
+
+\begin{definition}[Divergence, ejection, and spin termination]
+Let \(\omega\) denote a UD-spin speed for an \(S\)-molecule \(\mathbb M\).
+Let
+\[
+  \mathsf{Div}_{\mathbb M}(\omega)
+\]
+be the amount of perturbation that \(\mathbb M\) can internally dissipate
+or diverge at spin speed \(\omega\), and let
+\[
+  \mathsf{Eject}_{\mathbb M}(\omega)
+\]
+be the amount that can be ejected through boundary-visible residue at
+that speed.  If \(\lambda_\xi\) denotes the incoming perturbation rate,
+then the basic stability condition is
+\[
+  \lambda_\xi
+  \leq
+  \mathsf{Div}_{\mathbb M}(\omega)
+  +
+  \mathsf{Eject}_{\mathbb M}(\omega).
+\]
+When this condition holds and the induced UD-spin terminates, the
+\(S\)-molecule returns to a state that is observationally equivalent, at
+the chosen boundary resolution, to the original composite record.
+\end{definition}
+
+\begin{definition}[Critical spin speed]
+The critical spin speed of an \(S\)-molecule \(\mathbb M\) is the boundary
+spin speed at which the incoming perturbation rate begins to exceed the
+sum of the divergence capacity and ejection capacity:
+\[
+  \lambda_\xi
+  >
+  \mathsf{Div}_{\mathbb M}(\omega)
+  +
+  \mathsf{Eject}_{\mathbb M}(\omega).
+\]
+Beyond this boundary, residue accumulates faster than it can be processed.
+If \(R_t\) denotes accumulated residue, one may record the update
+schematically as
+\[
+  R_{t+1}
+  =
+  R_t
+  +
+  \lambda_\xi
+  -
+  \bigl(
+    \mathsf{Div}_{\mathbb M}(\omega)
+    +
+    \mathsf{Eject}_{\mathbb M}(\omega)
+  \bigr).
+\]
+When the residue exceeds the tolerance allowed by the coherence contract,
+the \(S\)-molecule may break, dissociate, reconfigure, or cease to be
+observable as one composite record.
+\end{definition}
+
+\begin{definition}[Observed UD-spin speed]
+The internal UD-spin speed of an \(S\)-molecule and the externally
+observed UD-spin speed need not coincide.  We write
+\[
+  \omega^{\mathrm{int}}_{\mathbb M}
+\]
+for the internal spin speed and
+\[
+  \omega^{\Obs}_{\mathbb M}
+\]
+for the boundary-visible observed spin speed.  If
+\(\alpha_{\mathbb M}\) denotes observational resolution or accuracy, then
+one may model the observed speed as
+\[
+  \omega^{\Obs}_{\mathbb M}
+  =
+  \alpha_{\mathbb M}\cdot \omega^{\mathrm{eff}}_{\mathbb M}.
+\]
+For a long serial chain of \(S\)-molecules, observational resolution may
+decrease as the chain length increases.  In such models the observed
+UD-spin speed is allowed to remain constant or decrease, even if local
+internal spin speeds do not decrease.
+\end{definition}
+
+\begin{definition}[Non-observable pending wait]
+During the formation or perturbation of an \(S\)-molecule, internal
+non-equivalent exchanges need not be externally observable.  Let
+\(\sigma_A\) be the time at which an internal accumulation begins in
+\(A\), let \(\theta_A\) be the time at which that accumulation becomes
+boundary-visible, and let \(\tau_{A\to B}\) be the time at which the
+corresponding exchange is implemented toward \(B\).  The non-observable
+pending wait from \(A\) to \(B\) is
+\[
+  T^{\mathrm{NP}}_{A\to B}
+  =
+  \tau_{A\to B}-\theta_A.
+\]
+Here NP means ``non-observable pending'' and is unrelated to the
+complexity class NP.
+\end{definition}
+
+\begin{definition}[S-polymer]
+An \(S\)-polymer is a finite or indexed composite of \(S\)-molecules
+\[
+  \operatorname{SMol}_1
+  \SComp
+  \operatorname{SMol}_2
+  \SComp
+  \cdots
+  \SComp
+  \operatorname{SMol}_n
+\]
+which is externally observable as one higher-order USD entity at a chosen
+boundary resolution.  An \(S\)-polymer may model a physical material, a
+software dependency cluster, an institution, or another composite system,
+provided that a suitable realization of the USD records is supplied.
+\end{definition}
+
+\begin{remark}[S-molecules and physical examples]
+A covalent bond may be used as an intuitive model of an \(S\)-molecule:
+two atoms remain distinguishable while forming a stable shared state
+through electron-density-mediated interaction.  This comparison is only a
+model reading.  USD theory does not redefine covalent bonding, molecular
+physics, software dependency, or any other base-domain concept.  To obtain
+a USD-free physical conclusion, the relevant descent license must still
+be supplied in the base theory.
+\end{remark}
+
+% -----------------------------------------------------------------------------
 \section{A syntactic reference implementation}
 % -----------------------------------------------------------------------------
 
