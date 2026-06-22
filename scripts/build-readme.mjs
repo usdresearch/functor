@@ -164,10 +164,10 @@ function normalizeGithubMath(markdown) {
 
     return segment
       .replace(/\\\[((?:.|\n)*?)\\\]/g, (_match, math) => {
-        return `\n\n\`\`\`math\n${math.trim()}\n\`\`\`\n\n`;
+        return `\n\n\`\`\`math\n${normalizeGithubMathContent(math.trim())}\n\`\`\`\n\n`;
       })
       .replace(/\\\((.*?)\\\)/g, (_match, math) => {
-        const trimmedMath = math.trim();
+        const trimmedMath = normalizeGithubMathContent(math.trim());
 
         if (trimmedMath.includes('`')) {
           return `$${trimmedMath}$`;
@@ -178,6 +178,13 @@ function normalizeGithubMath(markdown) {
       .replace(/[ \t]+\n\n```math/g, '\n\n```math')
       .replace(/```\n\n[ \t]+/g, '```\n\n');
   }).join('');
+}
+
+function normalizeGithubMathContent(math) {
+  return math
+    .replace(/\\operatorname\s*\{([^{}]+)\}/g, '\\mathrm{$1}')
+    .replace(/\\xleftarrow\s*\{([^{}]*)\}/g, '\\overset{$1}{\\leftarrow}')
+    .replace(/\\xrightarrow\s*\{([^{}]*)\}/g, '\\overset{$1}{\\rightarrow}');
 }
 
 function shiftHeadings(markdown, levels) {
