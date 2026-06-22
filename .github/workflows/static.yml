@@ -76,19 +76,19 @@ jobs:
       - name: Skip publication
         run: echo "No TeX changes since ${{ needs.changes.outputs.last_tag }}; nothing to publish."
 
-  compile_pdf:
+  compile_artifacts:
     needs: changes
     if: needs.changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     outputs:
-      publish_sha: ${{ steps.compiled_pdf.outputs.publish_sha }}
+      publish_sha: ${{ steps.compiled_artifacts.outputs.publish_sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Compile PDF
+      - name: Compile PDF and README
         shell: bash
         run: |
           set -euo pipefail
@@ -96,6 +96,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             latexmk \
+            pandoc \
             texlive-fonts-recommended \
             texlive-latex-base \
             texlive-latex-extra \
@@ -104,29 +105,35 @@ jobs:
 
           latexmk -pdf -interaction=nonstopmode -halt-on-error usd_functor_reference_implementation.tex
           latexmk -c usd_functor_reference_implementation.tex
+          pandoc usd_functor_reference_implementation.tex \
+            --from=latex \
+            --to=gfm+raw_html \
+            --lua-filter=.github/pandoc/mathml-gfm.lua \
+            --wrap=none \
+            --output=README.md
 
-      - name: Commit compiled PDF
-        id: compiled_pdf
+      - name: Commit compiled artifacts
+        id: compiled_artifacts
         shell: bash
         run: |
           set -euo pipefail
 
-          if git diff --quiet -- usd_functor_reference_implementation.pdf; then
-            echo "PDF is already up to date."
+          if [[ -z "$(git status --porcelain -- usd_functor_reference_implementation.pdf README.md)" ]]; then
+            echo "Compiled artifacts are already up to date."
             echo "publish_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add usd_functor_reference_implementation.pdf
-          git commit -m "Compile PDF from TeX"
+          git add usd_functor_reference_implementation.pdf README.md
+          git commit -m "Compile artifacts from TeX"
           git push origin "HEAD:${GITHUB_REF_NAME}"
           echo "publish_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   deploy_pages:
-    needs: compile_pdf
-    if: needs.compile_pdf.outputs.publish_sha != ''
+    needs: compile_artifacts
+    if: needs.compile_artifacts.outputs.publish_sha != ''
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -135,15 +142,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.compile_pdf.outputs.publish_sha }}
+          ref: ${{ needs.compile_artifacts.outputs.publish_sha }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare Pages artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp usd_functor_reference_implementation.pdf _site/
+          cp usd_functor_reference_implementation.tex _site/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -152,14 +167,14 @@ jobs:
   publish_release:
     needs:
       - changes
-      - compile_pdf
-    if: needs.compile_pdf.outputs.publish_sha != ''
+      - compile_artifacts
+    if: needs.compile_artifacts.outputs.publish_sha != ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.compile_pdf.outputs.publish_sha }}
+          ref: ${{ needs.compile_artifacts.outputs.publish_sha }}
           fetch-depth: 0
 
       - name: Prepare GitHub Release
@@ -168,7 +183,7 @@ jobs:
         env:
           COMMIT_COUNT: ${{ needs.changes.outputs.commit_count }}
           LAST_TAG: ${{ needs.changes.outputs.last_tag }}
-          PUBLISH_SHA: ${{ needs.compile_pdf.outputs.publish_sha }}
+          PUBLISH_SHA: ${{ needs.compile_artifacts.outputs.publish_sha }}
         run: |
           set -euo pipefail
 
@@ -200,6 +215,6 @@ jobs:
           gh release create "${{ steps.release.outputs.tag_name }}" \
             usd_functor_reference_implementation.pdf \
             usd_functor_reference_implementation.tex \
-            --target "${{ needs.compile_pdf.outputs.publish_sha }}" \
+            --target "${{ needs.compile_artifacts.outputs.publish_sha }}" \
             --title "${{ steps.release.outputs.title }}" \
             --notes-file release_notes.md
