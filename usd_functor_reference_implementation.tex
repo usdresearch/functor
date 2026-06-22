@@ -1341,6 +1341,130 @@ supply them automatically.
 \end{remark}
 
 % -----------------------------------------------------------------------------
+\section{Interdisciplinary test model}
+% -----------------------------------------------------------------------------
+
+The preceding relativistic section tests USD vocabulary inside a
+mathematical physics setting.  The same discipline can be used for
+interdisciplinary examples, where the carrier data are not all drawn from
+one field.  The purpose of such a model is not to turn a social or
+economic interpretation into a proof of intention.  It is to keep the
+interfaces visible when social records and economic records are read
+together.
+
+\begin{definition}[Interdisciplinary test base]
+Let $\mathcal S$ be a category of sociological records and let
+$\mathcal E$ be a category of economic records.  An interdisciplinary
+carrier may be taken to be the product category
+\[
+  \mathcal C_{\mathcal S,\mathcal E}
+  \defeq
+  \mathcal S\times\mathcal E,
+\]
+or, more generally, a category equipped with projection functors
+\[
+  p_{\mathcal S}:\mathcal C_{\mathcal S,\mathcal E}\to\mathcal S,
+  \qquad
+  p_{\mathcal E}:\mathcal C_{\mathcal S,\mathcal E}\to\mathcal E.
+\]
+A USD functor into $\mathcal C_{\mathcal S,\mathcal E}$ records a
+joint social-economic reading.  Its relation witnesses may compare
+social data, economic data, or boundary-visible couplings between them.
+\end{definition}
+
+\begin{remark}[No hidden interdisciplinary descent]
+An interdisciplinary USD record is not, by itself, an empirical
+explanation.  A descent license must specify the accepted historical
+sources, social model, economic model, and rule that permits a USD record
+to be translated into a USD-free claim.  Without such a license, the
+record remains a structured hypothesis or interpretation.
+\end{remark}
+
+\subsection{Satoshi test}
+
+The pseudonymous creator of Bitcoin gives a useful interdisciplinary
+test case.  The Bitcoin white paper presents the system as peer-to-peer
+electronic cash without reliance on a trusted third party
+\cite{Nakamoto2008}.  Late in 2010, Satoshi Nakamoto publicly warned that
+Bitcoin was still a small beta community and that sudden WikiLeaks-driven
+attention could bring destructive heat \cite{Nakamoto2010WikiLeaks}.
+The following day, Satoshi also described denial-of-service resistance as
+unfinished work \cite{Nakamoto2010DoS}.  Separately, claims that Satoshi
+or a dominant early miner controlled about one million bitcoins depend on
+chain-analysis heuristics; the evidence is suggestive but not as robust
+as popular retellings often imply \cite{BitMEX2018}.
+
+Let $\mathcal A$ be a small category of possible founder actions:
+revealing an identity, exercising founder authority, moving early coins,
+transferring control, remaining pseudonymous, or withdrawing from public
+control.  A Satoshi test record is a USD functor
+\[
+  \mathbb H_{\mathrm{Sat}}:
+  \mathcal A\to\mathcal C_{\mathcal S,\mathcal E}
+\]
+whose social projection records effects such as legitimacy, founder
+authority, regulatory visibility, community dependence, and governance
+centrality, and whose economic projection records effects such as early
+coin concentration, liquidity, expected sell pressure, scarcity belief,
+and market confidence.
+
+In this model, the adoptive face of a withdrawal record may contain the
+features that support decentralized adoption:
+\[
+  U_{\mathrm{decent}}
+  =
+  \{\text{reduced founder authority, reduced central target,
+    reduced sell-pressure signal}\}.
+\]
+The non-adoptive face records what is not taken up by the main output:
+\[
+  D_{\mathrm{fame/wealth}}
+  =
+  \{\text{public fame, founder control, direct realization of early
+    coin wealth}\}.
+\]
+The relevant boundary-visible relation may be written schematically as
+\[
+  U_{\mathrm{decent}}
+  \uconn
+  D_{\mathrm{fame/wealth}}.
+\]
+This does not say that fame and wealth were morally rejected, nor that a
+particular person had a proved intention.  It says that, in the joint
+social-economic carrier, decentralized adoption can be modeled as
+boundary-visible only when founder fame, founder control, and direct
+realization of early coin wealth remain non-adopted residue.
+
+A conservative best-effort policy can be expressed by assigning each
+action $a\in\mathcal A$ a social cost and an economic cost,
+\[
+  C_{\mathcal S}(a),\qquad C_{\mathcal E}(a),
+\]
+and selecting an action whose worst visible cost is minimal:
+\[
+  a^*
+  \in
+  \operatorname*{arg\,min}_{a\in\mathcal A}
+  \max\{C_{\mathcal S}(a),C_{\mathcal E}(a)\}.
+\]
+Under one plausible policy, withdrawal together with non-movement of the
+early coins is a candidate for $a^*$.  It reduces the social risk of a
+founder becoming a central authority or legal target and reduces the
+economic risk of a large sell-pressure signal.  The loss is not erased:
+the abandoned fame, unresolved identity, and unrealized wealth remain as
+self-anchored residue attached to the record.
+
+\begin{remark}[No proof of Satoshi's intention]
+The Satoshi test licenses at most a structural conclusion: withdrawal and
+coin non-movement can be modeled as a best-effort stable record for
+Bitcoin's social and economic decentralization.  It does not license the
+USD-free assertion that Satoshi chose withdrawal for that reason.  The
+inner intention, the exact identity, and the exact status of the early
+coins remain non-adopted residue unless supplied by independent historical
+evidence and an explicit descent license.
+\end{remark}
+
+% -----------------------------------------------------------------------------
 \section{Reviewer-facing checklist}
 % -----------------------------------------------------------------------------
 
@@ -1413,7 +1537,7 @@ defined only when it preserves the stance-lift invariant through $q$.  The
 resulting system can guide interpretation and proof search while remaining
 conservative over the base language for USD-free conclusions.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 
 \bibitem{MacLane1971}
 Saunders Mac Lane.
@@ -1450,7 +1574,32 @@ Albert Einstein.
 \newblock Die Grundlage der allgemeinen Relativit\"atstheorie.
 \newblock \emph{Annalen der Physik}, 354(7):769--822, 1916.
 
+\bibitem{Nakamoto2008}
+Satoshi Nakamoto.
+\newblock Bitcoin: A Peer-to-Peer Electronic Cash System.
+\newblock 2008.
+\newblock \url{https://bitcoin.org/bitcoin.pdf}.
+
+\bibitem{Nakamoto2010WikiLeaks}
+Satoshi Nakamoto.
+\newblock Re: Wikileaks contact info?
+\newblock BitcoinTalk, December 5, 2010.
+\newblock Archived by the Satoshi Nakamoto Institute:
+\url{https://satoshi.nakamotoinstitute.org/posts/bitcointalk/523/}.
+
+\bibitem{Nakamoto2010DoS}
+Satoshi Nakamoto.
+\newblock Added some DoS limits, removed safe mode (0.3.19).
+\newblock BitcoinTalk, December 12, 2010.
+\newblock Archived by the Satoshi Nakamoto Institute:
+\url{https://satoshi.nakamotoinstitute.org/posts/bitcointalk/543/}.
+
+\bibitem{BitMEX2018}
+BitMEX Research.
+\newblock Does Satoshi have a million bitcoin?
+\newblock August 20, 2018.
+\newblock \url{https://www.bitmex.com/blog/satoshis-1-million-bitcoin}.
+
 \end{thebibliography}
 
 \end{document}
-
