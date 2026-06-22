@@ -76,13 +76,12 @@ jobs:
       - name: Skip publication
         run: echo "No TeX changes since ${{ needs.changes.outputs.last_tag }}; nothing to publish."
 
-  publish:
+  compile_pdf:
     needs: changes
     if: needs.changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      publish_sha: ${{ steps.compiled_pdf.outputs.publish_sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -125,6 +124,19 @@ jobs:
           git push origin "HEAD:${GITHUB_REF_NAME}"
           echo "publish_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
+  deploy_pages:
+    needs: compile_pdf
+    if: needs.compile_pdf.outputs.publish_sha != ''
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.compile_pdf.outputs.publish_sha }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -137,13 +149,26 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
 
+  publish_release:
+    needs:
+      - changes
+      - compile_pdf
+    if: needs.compile_pdf.outputs.publish_sha != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.compile_pdf.outputs.publish_sha }}
+          fetch-depth: 0
+
       - name: Prepare GitHub Release
         id: release
         shell: bash
         env:
           COMMIT_COUNT: ${{ needs.changes.outputs.commit_count }}
           LAST_TAG: ${{ needs.changes.outputs.last_tag }}
-          PUBLISH_SHA: ${{ steps.compiled_pdf.outputs.publish_sha }}
+          PUBLISH_SHA: ${{ needs.compile_pdf.outputs.publish_sha }}
         run: |
           set -euo pipefail
 
@@ -152,9 +177,9 @@ jobs:
           title="Hourly publish ${short_sha}"
 
           if [[ -n "$LAST_TAG" ]]; then
-            log_range="${LAST_TAG}..HEAD"
+            log_range="${LAST_TAG}..${PUBLISH_SHA}"
           else
-            log_range="HEAD"
+            log_range="${PUBLISH_SHA}"
           fi
 
           {
@@ -175,6 +200,6 @@ jobs:
           gh release create "${{ steps.release.outputs.tag_name }}" \
             usd_functor_reference_implementation.pdf \
             usd_functor_reference_implementation.tex \
-            --target "${{ steps.compiled_pdf.outputs.publish_sha }}" \
+            --target "${{ needs.compile_pdf.outputs.publish_sha }}" \
             --title "${{ steps.release.outputs.title }}" \
             --notes-file release_notes.md
