@@ -886,19 +886,64 @@ as a global candidate record.  The existential version says that some
 local contribution is imaged globally; the universal version says that a
 local condition is extended as a global constraint when possible.
 
-\subsection{C-D-E and S-T-U reading order}
+\subsection{API coverage and saturation}
 
-The six operations have two useful reading sequences:
+The six operations are APIs, not phases of an algorithm.  A model may call
+them in any order, may call the same API more than once, and may feed the
+records produced by one API into any other API whenever the input and
+existence conditions match.  What can be required without ambiguity is not
+a global application order, but a coverage certificate.
+
+\begin{definition}[API agenda]
+For a USD test model, an API agenda is a six-tuple
 \[
-  \CComp\longrightarrow\DComp\longrightarrow\EComp
+  \mathcal A
+  =
+  (\mathcal A_C,\mathcal A_D,\mathcal A_E,
+   \mathcal A_S,\mathcal A_T,\mathcal A_U),
 \]
-and
+where $\mathcal A_\star$ is a finite or indexed family of typed candidate
+calls to the corresponding API.  The agenda is six-covered when no
+component is empty and every listed candidate call supplies the input data
+and existence conditions required by its API.
+\end{definition}
+
+\begin{definition}[Saturation closure]
+Let $R_0$ be a family of seed USD records and let $\mathcal A$ be a
+six-covered API agenda.  Write
 \[
-  \SComp\longrightarrow\TComp\longrightarrow\UComp.
+  \Gamma_{\mathcal A}(R)
+  =
+  R\cup C_{\mathcal A}(R)\cup D_{\mathcal A}(R)
+   \cup E_{\mathcal A}(R)\cup S_{\mathcal A}(R)
+   \cup T_{\mathcal A}(R)\cup U_{\mathcal A}(R)
 \]
-The first sequence compresses free records, lowers them, and subdivides
-anchored local records.  The second stabilizes a shared gap, turns the
-record chain upside down, and then images the result upward.
+for the family obtained by adding all well-typed outputs of the candidate
+calls whose inputs are present in $R$.  A saturated expansion is a fixed
+point
+\[
+  R^*=\Gamma_{\mathcal A}(R^*)
+\]
+generated from $R_0$; in a finite agenda this is the least closure reached
+by repeatedly adding newly well-typed outputs.  The expansion is accepted
+only when every generated record preserves the common stance-lift
+invariant through $q$.
+\end{definition}
+
+\begin{definition}[Coverage certificate]
+A coverage certificate for a USD test model consists of a six-covered API
+agenda $\mathcal A$, a saturated expansion $R^*$, and a check that the
+realized API set is exactly
+\[
+  \{\CComp,\DComp,\EComp,\SComp,\TComp,\UComp\}.
+\]
+Thus missing use of any one API is a failure of the test model, while
+multiple uses of an API are permitted whenever they are typed.
+\end{definition}
+
+Diagrams in examples may still display dependency arrows between records.
+Such arrows describe which outputs are used as later inputs; they are not
+a global execution order for the six APIs.
 
 % -----------------------------------------------------------------------------
 \section{S-molecules and residue-stable sideways composites}
@@ -1382,7 +1427,7 @@ Thus special relativity is not skipped.  It is the first cut vertex
 through which the Newtonian record is factored before the general
 relativistic record is formed.
 
-\textbf{First E-step: Newton to special relativity.}  The cut vertex
+\textbf{First E-instance: Newton to special relativity.}  The cut vertex
 $m_{\mathrm{SR}}$ is itself resolved into smaller cuts:
 \[
 \begin{aligned}
@@ -1431,7 +1476,7 @@ This is not erasure of Newtonian mechanics.  It is a factorization of the
 role played by absolute time into observable clock readings, synchronization,
 frame choice, transformation law, and invariant spacetime interval.
 
-\textbf{Second E-step: special to general relativity.}  The next cut
+\textbf{Second E-instance: special to general relativity.}  The next cut
 vertex is not another synchronization convention.  It is the passage from
 global inertial frames to local inertial structure:
 \[
@@ -1546,7 +1591,7 @@ moving early coins, not moving early coins, distributing control,
 signalling sale, or remaining economically inactive.  These categories are
 not identified.  They touch only through a boundary-visible interface.
 
-\textbf{D0-step.}  Begin with broad sociological and economic USD records
+\textbf{D0-instance.}  Begin with broad sociological and economic USD records
 $\mathbb H_{\mathcal S}^{0}$ and $\mathbb H_{\mathcal E}^{0}$.  Let
 \[
   \rho_{\mathcal S}^{0}:
@@ -1569,7 +1614,7 @@ social and economic contexts.  The first downward restriction is
 This step does not select withdrawal as the answer.  It only removes
 material outside the founder-action comparison class.
 
-\textbf{C-step.}  The social and economic records are read together only
+\textbf{C-instance.}  The social and economic records are read together only
 inside the interdisciplinary carrier $\mathcal C_{\mathcal S,\mathcal E}$.
 Before applying compression, assume the model supplies typed carrier lifts
 \[
@@ -1624,7 +1669,7 @@ or that economic non-movement is a social intention.  It records only the
 typed interface through which both projections become visible in the same
 interdisciplinary carrier.
 
-\textbf{D1-step.}  Now restrict the compressed record to the local Satoshi
+\textbf{D1-instance.}  Now restrict the compressed record to the local Satoshi
 context.  Let
 \[
   \rho_{\mathrm{Sat}}:
@@ -1645,7 +1690,7 @@ This second downward restriction is local reading, not historical
 descent.  It does not infer the inner intention, the identity, or the key
 status of Satoshi.
 
-\textbf{E-step.}  Anchor the local record between an initial founder-action
+\textbf{E-instance.}  Anchor the local record between an initial founder-action
 state $a_0$ and a decentralization-signal state $a_1$:
 \[
   \mathbb L_{\mathrm{Sat},a_0,a_1}:a_0\Rightarrow_{\USD}a_1.
@@ -1676,7 +1721,7 @@ factorization is deliberately conservative; it prevents the record from
 jumping directly from withdrawal to decentralization or from coin
 non-movement to personal intention.
 
-\textbf{S-step.}  The sideways stabilization is the core of the Satoshi
+\textbf{S-instance.}  The sideways stabilization is the core of the Satoshi
 test.  Let $\Lambda_{\mathrm{Sat}}$ be a complete lattice of discrepancies
 between decentralization-supporting outputs and non-adopted founder
 residue, and let
@@ -1777,7 +1822,7 @@ erased: abandoned fame, unresolved identity, founder control, direct
 realization of early wealth, and exact early-coin status remain attached
 as self-anchored residue.
 
-\textbf{T-step.}  Let $\mathcal H_{\mathrm{Sat}}$ be the finite subdivided
+\textbf{T-instance.}  Let $\mathcal H_{\mathrm{Sat}}$ be the finite subdivided
 record chain underlying $\mathbb E_{\mathrm{Sat}}$ and
 $\operatorname{SMol}_{\mathrm{Sat}}$.  Temporal turnover gives
 \[
@@ -1793,15 +1838,17 @@ Forward, the record reads:
 \]
 Turned over, it reads:
 \[
-  \text{decentralized Bitcoin record}
-  \longrightarrow
+\begin{aligned}
+  &\text{decentralized Bitcoin record}\\
+  &\quad\longrightarrow
   \text{founder fame, control, wealth, identity, and intention as residue}.
+\end{aligned}
 \]
 This reversal blocks a common overreading.  The present decentralized
 record may be read as carrying founder-residue, but it does not reveal
 the founder's private reason for withdrawing or not moving coins.
 
-\textbf{U-step.}  Finally, when the relevant lifted Kan extension exists,
+\textbf{U-instance.}  When the relevant lifted Kan extension exists,
 image the turned local record upward along $\rho_{\mathrm{Sat}}$:
 \[
   \mathbb U_{\mathrm{Sat}}
@@ -1833,8 +1880,9 @@ The Oppenheimer test is an interdisciplinary stress test for ethical
 translation.  Its source data use only two categories: a category of
 theoretical nuclear physics and a category of public policy.  The
 philosophical forum and the trial of Socrates are not assumed as source
-categories.  They appear only after the USD record has been compressed,
-lowered, cut, stabilized, turned over, and imaged upward.
+categories.  They appear only after the test supplies a six-API coverage
+certificate and saturates the generated USD record family.  No global
+application order of the APIs is part of the claim.
 
 Historically, the Manhattan Project made nuclear fission and explosive
 chain reactions into an organized weapon program.  The Smyth Report
@@ -1846,8 +1894,9 @@ social and political problem, not merely a technical one
 Socrates' public practice of examination was answered by charges of
 corrupting the youth and impiety \cite{PlatoApology}.  The USD claim
 below is not that these events are historically the same.  It is that
-the Oppenheimer record can be transformed, without dropping the decisive
-gap, into the forum structure made visible by the trial of Socrates.
+the Oppenheimer record can be saturated, without dropping the decisive
+gap, into a record family whose upward image realizes the forum structure
+made visible by the trial of Socrates.
 
 Let
 \[
@@ -1894,23 +1943,60 @@ accountability.  The interface category is the Grothendieck construction
 whose objects are triples $(t,p,\theta)$.  This interface is the exact
 place where theoretical success becomes a public-policy option.
 
-\textbf{C-step.}  Let $\mathbb H_T$ be a USD record over
+\textbf{C-instance.}  Let $\mathbb H_T$ be a USD record over
 $\mathcal T_{\mathrm{nuc}}$ and let $\mathbb H_P$ be a USD record over
-$\mathcal P_{\mathrm{pub}}$.  Compression along the interface gives an
-Oppenheimer record
+$\mathcal P_{\mathrm{pub}}$.  To type the compression, assume an
+interdisciplinary carrier category $\mathcal C_{\mathrm{Op}}$ and typed
+carrier lifts
+\[
+  \widehat{\mathbb H}_T:
+  \mathcal T_{\mathrm{nuc}}\to\mathcal C_{\mathrm{Op}},
+  \qquad
+  \widehat{\mathbb H}_P:
+  \mathcal P_{\mathrm{pub}}\to\mathcal C_{\mathrm{Op}}.
+\]
+Let
+\[
+  i:\mathcal I_{\Theta}\to\mathcal T_{\mathrm{nuc}},
+  \qquad
+  j:\mathcal I_{\Theta}\to\mathcal P_{\mathrm{pub}}
+\]
+be the interface projections, with the first projection read through the
+variance of $\Theta_{\mathrm{Op}}$.  Compression along the interface gives
+an Oppenheimer record
 \[
   \mathbb O
   \defeq
-  \CComp_{\mathcal I_{\Theta}}(\mathbb H_T,\mathbb H_P).
+  \CComp_{\mathcal I_{\Theta}}
+  (\widehat{\mathbb H}_T,\widehat{\mathbb H}_P).
+\]
+Its compressed global context is
+\[
+  \mathcal G_{\mathrm{Op}}
+  \defeq
+  \mathcal T_{\mathrm{nuc}}
+  \sqcup_{\mathcal I_{\Theta}}
+  \mathcal P_{\mathrm{pub}}.
 \]
 The compression does not identify theory with policy.  It only records
 that the two sides now share a boundary witness: the same nuclear-physics
 result that counts as explanatory success in $\mathcal T_{\mathrm{nuc}}$
 also counts as a possible state action in $\mathcal P_{\mathrm{pub}}$.
 
-\textbf{D-step.}  Lowering $\mathbb O$ extracts the theory-practice
-shape.  The lowered carrier forgets the details of isotopes, laboratories,
-committees, and military offices, but retains the typed collision
+\textbf{D-instance.}  Choose a local theory-practice context
+\[
+  \rho_{\mathrm{Op}}:
+  \mathcal L_{\mathrm{Op}}\to\mathcal G_{\mathrm{Op}}
+\]
+that retains the possible/ought collision and forgets the details of
+isotopes, laboratories, committees, and military offices.  Downward
+restriction gives
+\[
+  \mathbb L_{\mathrm{Op}}
+  \defeq
+  \DComp_{\rho_{\mathrm{Op}}}(\mathbb O).
+\]
+The local carrier retains the typed collision
 \[
   \text{possible}
   \;\Longrightarrow\;
@@ -1922,7 +2008,14 @@ remain epistemic in its own category, but after contact with public
 policy it generates an actionable option for which someone becomes
 answerable.
 
-\textbf{E-step.}  To avoid a leap from theory to guilt, insert an
+\textbf{E-instance.}  To avoid a leap from theory to guilt, anchor
+$\mathbb L_{\mathrm{Op}}$ between the local records
+$\mathrm{possible}$ and $\mathrm{responsible}$:
+\[
+  \mathbb L_{\mathrm{Op},\mathrm{possible},\mathrm{responsible}}:
+  \mathrm{possible}\Rightarrow_{\USD}\mathrm{responsible}.
+\]
+Insert an
 internal cut vertex
 \[
   m_{\mathrm{act}}
@@ -1931,7 +2024,10 @@ internal cut vertex
 \]
 The Oppenheimer record is subdivided as
 \[
-  \EComp_{m_{\mathrm{act}}}(\mathbb O)
+  \mathbb E_{\mathrm{Op}}
+  \defeq
+  \EComp_{m_{\mathrm{act}}}
+  (\mathbb L_{\mathrm{Op},\mathrm{possible},\mathrm{responsible}})
   =
   (\mathbb O_{\mathrm{possible},m_{\mathrm{act}}},
    \mathbb O_{m_{\mathrm{act}},\mathrm{responsible}};
@@ -1944,12 +2040,32 @@ Thus the ethical problem is not imported from outside physics or outside
 policy.  It is produced at the cut where a prediction becomes an
 implementable public act.
 
-\textbf{S-step.}  The stable Oppenheimer molecule is
+\textbf{S-instance.}  Let $\Lambda_{\mathrm{Op}}$ be a complete lattice
+of discrepancies between theoretical success and ethically non-neutral
+public action.  Let
+\[
+  \Phi_{\mathrm{Op}}:
+  \Lambda_{\mathrm{Op}}\to\Lambda_{\mathrm{Op}}
+\]
+be the monotone update map supplied by the model, and choose a fixed
+point
+\[
+  \Delta_{\mathrm{Op}}^*
+  =
+  \Phi_{\mathrm{Op}}(\Delta_{\mathrm{Op}}^*).
+\]
+Let $A_{\mathrm{theory}}$ be the theoretical-success record and
+$B_{\mathrm{practice}}$ the public-action residue record.  The stable
+Oppenheimer molecule is
 \[
   \operatorname{SMol}_{\mathrm{Op}}
   \defeq
+  \SComp(A_{\mathrm{theory}},B_{\mathrm{practice}};
+   \Delta_{\mathrm{Op}}^*)
+  =
   \operatorname{SMol}
-  (\mathbb H_T,\mathbb H_P;\Delta_{\mathrm{Op}}^*).
+  (A_{\mathrm{theory}},B_{\mathrm{practice}};
+   \Delta_{\mathrm{Op}}^*).
 \]
 Its adoptive theoretical face is
 \[
@@ -1984,7 +2100,17 @@ direct and irreversible destruction, while nonuse, delay, demonstration,
 or secrecy may leave war, arms-race, or governance risks unresolved.
 The molecule therefore preserves the dilemma instead of resolving it.
 
-\textbf{T-step.}  Temporal turnover reverses the reading of the record.
+\textbf{T-instance.}  Let $\mathcal H_{\mathrm{Op}}$ be a finite
+composable USD chain containing the subdivided local record
+$\mathbb E_{\mathrm{Op}}$ and the stabilized molecule
+$\operatorname{SMol}_{\mathrm{Op}}$ as typed factors.  Temporal turnover
+gives
+\[
+  \mathbb T_{\mathrm{Op}}
+  \defeq
+  \TComp(\mathcal H_{\mathrm{Op}}).
+\]
+This reverses the reading of the record chain.
 Forward, the Oppenheimer molecule reads:
 \[
   \text{theory discovers possibility}
@@ -2012,10 +2138,20 @@ the same contradiction as disqualification.  The boundary witness is the
 same shape as in the Oppenheimer molecule: a successful epistemic act
 creates an irreversible practical burden.
 
-\textbf{U-step.}  The upward image of the turned record is the Socratic
-trial schema:
+\textbf{U-instance.}  Let
 \[
-  \UComp(\TComp(\operatorname{SMol}_{\mathrm{Op}}))
+  \rho_{\mathrm{Forum}}:
+  \mathcal L_{\mathrm{no\text{-}rewind}}
+  \to
+  \mathcal G_{\mathrm{Forum}}
+\]
+be the context morphism from the local no-rewind forum pattern to a
+global forum schema.  When the relevant lifted Kan extension exists, the
+upward image of the turned record is the Socratic trial schema:
+\[
+  \mathbb U_{\mathrm{Op}}
+  \defeq
+  \UComp^{\exists}_{\rho_{\mathrm{Forum}}}(\mathbb T_{\mathrm{Op}})
   \leadsto
   \mathrm{Trial}_{\mathrm{Socrates}}.
 \]
@@ -2034,6 +2170,38 @@ mapping is:
   \text{unresolved residue} &\mapsto& \text{loss of rewind rights}.
 \end{array}
 \]
+The coverage certificate for the Oppenheimer test is the six-covered
+agenda
+\[
+\begin{aligned}
+  \mathcal A_C
+  &=
+  \{\CComp_{\mathcal I_{\Theta}}
+    (\widehat{\mathbb H}_T,\widehat{\mathbb H}_P)\},\\
+  \mathcal A_D
+  &=
+  \{\DComp_{\rho_{\mathrm{Op}}}(\mathbb O)\},\\
+  \mathcal A_E
+  &=
+  \{\EComp_{m_{\mathrm{act}}}
+    (\mathbb L_{\mathrm{Op},\mathrm{possible},\mathrm{responsible}})\},\\
+  \mathcal A_S
+  &=
+  \{\SComp(A_{\mathrm{theory}},B_{\mathrm{practice}};
+    \Delta_{\mathrm{Op}}^*)\},\\
+  \mathcal A_T
+  &=
+  \{\TComp(\mathcal H_{\mathrm{Op}})\},\\
+  \mathcal A_U
+  &=
+  \{\UComp^{\exists}_{\rho_{\mathrm{Forum}}}
+    (\mathbb T_{\mathrm{Op}})\}.
+\end{aligned}
+\]
+The agenda may be saturated in any order, and the displayed dependencies
+only say which generated records are available as inputs to other typed
+API calls.  A stronger historical or moral conclusion is not produced by
+the saturation itself.
 The transformation is therefore not a metaphorical jump from physics to
 Athens.  It passes through the common S-molecular form:
 \[
