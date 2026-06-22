@@ -1,4 +1,37 @@
-# Scope and non-claims
+# The Up-Side-Down Functor: A Reference Implementation of Smart Functors with Boundary-Visible Stance
+
+**Author:** Shuhei Ihara
+
+**Date:** June 22, 2026
+
+## Abstract
+
+The Up-Side-Down functor is not a new equality, a new physical law, or a new proof principle. It is a structured functor: a pure functor equipped with an adoptive face, a non-adoptive face, a boundary witness, and a coherence contract. The purpose of this paper is to give a reference implementation of such structured functors and of their safe composition operations. The construction treats the adoptive and non-adoptive regions not as two arbitrary pre-existing categories, but as fibers of a single USD record fibration realized over both a carrier category and a two-sided stance category. In this sense a USD functor is a categorical analogue of a smart pointer: after forgetting the additional fields it is an ordinary functor, while before forgetting it carries explicit bookkeeping for observation, non-adoption, boundary visibility, and typed composition. Six API-level compositions are specified: compression, downward restriction, extension, sideways stabilization, temporal turnover, and upward image. Each operation is presented with its type, existence conditions, mathematical implementation, and philosophical reading. The conservative intent is made explicit: USD records may organize proof search or interpretation, but USD-free conclusions must be justified in the base theory.
+
+## Contents
+
+- [Scope and non-claims](#scope-and-non-claims)
+- [Base data](#base-data)
+- [The USD record fibration](#the-usd-record-fibration)
+- [USD functors as smart functors](#usd-functors-as-smart-functors)
+- [Morphisms and the category of USD functors](#morphisms-and-the-category-of-usd-functors)
+- [The six composition APIs](#the-six-composition-apis)
+  - [C-composition: compression](#c-composition-compression)
+  - [D-composition: downward restriction](#d-composition-downward-restriction)
+  - [E-composition: extension by a cut vertex](#e-composition-extension-by-a-cut-vertex)
+  - [S-composition: sideways shared stabilization](#s-composition-sideways-shared-stabilization)
+  - [T-composition: temporal turnover](#t-composition-temporal-turnover)
+  - [U-composition: upward image](#u-composition-upward-image)
+  - [C-D-E and S-T-U reading order](#c-d-e-and-s-t-u-reading-order)
+- [S-molecules and residue-stable sideways composites](#s-molecules-and-residue-stable-sideways-composites)
+- [A syntactic reference implementation](#a-syntactic-reference-implementation)
+- [Worked toy model](#worked-toy-model)
+- [Relativistic test model](#relativistic-test-model)
+- [Reviewer-facing checklist](#reviewer-facing-checklist)
+- [Open problems](#open-problems)
+- [Conclusion](#conclusion)
+
+## Scope and non-claims
 
 This draft responds to a common failure mode in early USD notation: terms such as relation, boundary, observation, adoption, refusal, gap, and turn can sound like explanatory prose rather than mathematical data. The present version therefore treats USD theory as a typed reference implementation. The reader should not be asked to infer the missing interfaces. They are made explicit.
 
@@ -8,7 +41,7 @@ This paper claims that one can specify a category of smart functors whose object
 
 The intended comparison is with a smart pointer in programming. A raw pointer stores an address. A smart pointer stores an address together with ownership, lifetime, and release discipline. Likewise, a raw functor stores functorial action. A USD functor stores functorial action together with an adoptive face and a non-adoptive face that are stance-lifts of the same carrier, together with a boundary witness and a coherence contract. Forgetting these fields returns the raw functor. Keeping them enables safe composition of records without silently turning records into proof steps.
 
-# Base data
+## Base data
 
 This section fixes the data that later sections use. The goal is to avoid introducing objects such as <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖱</mi><mi>𝖾</mi><mi>𝗅</mi></mstyle><annotation encoding="application/x-tex">\mathsf{Rel}</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖡</mi><mi>𝖵</mi><mi>𝗂</mi><mi>𝗌</mi></mstyle><annotation encoding="application/x-tex">\mathsf{BVis}</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖮</mi><mi>𝖻</mi><mi>𝗌</mi></mstyle><annotation encoding="application/x-tex">\mathsf{Obs}</annotation></semantics></math>, or <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝗇</mi><mi>𝖠</mi><mi>𝖽</mi><mi>𝗈</mi><mi>𝗉</mi><mi>𝗍</mi></mstyle><annotation encoding="application/x-tex">\mathsf{NonAdopt}</annotation></semantics></math> as undefined prose.
 
@@ -26,7 +59,7 @@ Boundary visibility is a substructure of relation witnesses. We write <math disp
 
 Nothing in the formal development requires <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖱</mi><mi>𝖾</mi><mi>𝗅</mi></mstyle><annotation encoding="application/x-tex">\mathsf{Rel}</annotation></semantics></math> to be equality, isomorphism, equivalence, metric proximity, causal accessibility, or logical entailment. Those are model choices. The USD reference implementation only assumes relation witnesses and boundary witnesses.
 
-# The USD record fibration
+## The USD record fibration
 
 The adoptive and non-adoptive sides are not introduced as two unrelated categories. They arise as fibers of a single record fibration.
 
@@ -56,7 +89,7 @@ The record category contains typed constructors <math display="block" xmlns="htt
 
 Given <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>,</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x,y</annotation></semantics></math> in a common context, the notation <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><munder><mo>⤳</mo><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></munder><mi>y</mi></mrow><annotation encoding="application/x-tex">x\mathrel{\leadsto_{\mathsf{USD}}}y</annotation></semantics></math> means that a boundary-visible connection record from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math> has been constructed. The notation <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><msub><mi>⇢</mi><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></msub><mi>y</mi></mrow><annotation encoding="application/x-tex">x\mathrel{\dashrightarrow_{\mathsf{USD}}}y</annotation></semantics></math> means that a proposed connection from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math> has been observed but is recorded on the non-adoptive side. Neither notation is equality or ordinary inequality.
 
-# USD functors as smart functors
+## USD functors as smart functors
 
 We now define the main object. The definition is deliberately close to a reference implementation: a USD functor is a record with fields.
 
@@ -109,7 +142,7 @@ A free USD functor is a USD functor considered before anchoring it to particular
 
 The distinction is essential. Functions, expressions, programs, formulas, and hypotheses may be free USD functors before they touch any particular pair of entities. Entity-to-entity contact is an anchoring of an already typed USD functor.
 
-# Morphisms and the category of USD functors
+## Morphisms and the category of USD functors
 
 Let <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="double-struck"><mi>ℍ</mi></mstyle><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>F</mi><mo>,</mo><msub><mi>U</mi><mi>F</mi></msub><mo>,</mo><msub><mi>D</mi><mi>F</mi></msub><mo>,</mo><msub><mi>∂</mi><mi>F</mi></msub><mo>,</mo><msub><mi>κ</mi><mi>F</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mspace width="2.0em"></mspace><mstyle mathvariant="double-struck"><mi>𝕂</mi></mstyle><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>G</mi><mo>,</mo><msub><mi>U</mi><mi>G</mi></msub><mo>,</mo><msub><mi>D</mi><mi>G</mi></msub><mo>,</mo><msub><mi>∂</mi><mi>G</mi></msub><mo>,</mo><msub><mi>κ</mi><mi>G</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathbb H=(F,U_F,D_F,\partial_F,\kappa_F),\qquad
   \mathbb K=(G,U_G,D_G,\partial_G,\kappa_G)</annotation></semantics></math> be USD functors from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="script"><mi>𝒳</mi></mstyle><annotation encoding="application/x-tex">\mathcal X</annotation></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><annotation encoding="application/x-tex">\mathcal C</annotation></semantics></math>. A morphism <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi><mo>:</mo><mstyle mathvariant="double-struck"><mi>ℍ</mi></mstyle><mo>→</mo><mstyle mathvariant="double-struck"><mi>𝕂</mi></mstyle></mrow><annotation encoding="application/x-tex">\eta:\mathbb H\to\mathbb K</annotation></semantics></math> consists of:
@@ -130,7 +163,7 @@ Identities are inherited componentwise from the functor category and the record 
 
 This proposition is intentionally modest. It is not advertised as a deep category-theoretic theorem. It is the sanity check that the reference implementation has the shape of a category.
 
-# The six composition APIs
+## The six composition APIs
 
 The following six operations are specified as APIs. Each operation has a mathematical implementation and a natural-language reading. None is an ordinary proof rule for equality, inequality, or physical truth.
 
@@ -138,7 +171,7 @@ Every composition API below is required to preserve carrier-realized stance-lift
   \qquad
   q\circ D_{F&#39;}=(F&#39;,\underline D).</annotation></semantics></math> This is the operational content of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>κ</mi><mstyle mathvariant="normal"><mi>c</mi><mi>o</mi><mi>m</mi><mi>p</mi></mstyle></msup><annotation encoding="application/x-tex">\kappa^{\mathrm{comp}}</annotation></semantics></math>: composition may change the carrier, boundary, or indexing shape, but it may not detach U-face or D-face records from their carrier realization.
 
-## C-composition: compression
+### C-composition: compression
 
 **Input.** Two free USD functors <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="double-struck"><mi>ℍ</mi></mstyle><mo>:</mo><mstyle mathvariant="script"><mi>𝒳</mi></mstyle><mo>→</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>,</mo><mspace width="2.0em"></mspace><mstyle mathvariant="double-struck"><mi>𝕂</mi></mstyle><mo>:</mo><mstyle mathvariant="script"><mi>𝒴</mi></mstyle><mo>→</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>,</mo></mrow><annotation encoding="application/x-tex">\mathbb H:\mathcal X\to\mathcal C,
   \qquad
@@ -157,7 +190,7 @@ A minimal boundary policy is <math display="block" xmlns="http://www.w3.org/1998
   \partial_{\mathbb K}\oplus
   \Delta_{\mathcal I}(\mathbb H,\mathbb K),</annotation></semantics></math> where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mstyle mathvariant="script"><mi>ℐ</mi></mstyle></msub><annotation encoding="application/x-tex">\Delta_{\mathcal I}</annotation></semantics></math> is the interface discrepancy supplied by the model.
 
-## D-composition: downward restriction
+### D-composition: downward restriction
 
 **Input.** A context morphism <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>:</mo><mstyle mathvariant="script"><mi>ℒ</mi></mstyle><mo>→</mo><mstyle mathvariant="script"><mi>𝒢</mi></mstyle></mrow><annotation encoding="application/x-tex">\rho:\mathcal L\to\mathcal G</annotation></semantics></math> and a USD functor over the global context <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="script"><mi>𝒢</mi></mstyle><annotation encoding="application/x-tex">\mathcal G</annotation></semantics></math>.
 
@@ -173,7 +206,7 @@ A minimal boundary policy is <math display="block" xmlns="http://www.w3.org/1998
 
 The natural-language reading is: a large observed USD functor is lowered to a local context. The operation is not a proof that the local context satisfies the global claim. It is the typed act of reading the global record through a local index.
 
-## E-composition: extension by a cut vertex
+### E-composition: extension by a cut vertex
 
 **Input.** An anchored USD functor <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mstyle mathvariant="double-struck"><mi>ℍ</mi></mstyle><mrow><mi>a</mi><mo>,</mo><mi>b</mi></mrow></msub><mo>:</mo><mi>a</mi><munder><mo>⇒</mo><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></munder><mi>b</mi></mrow><annotation encoding="application/x-tex">\mathbb H_{a,b}:a\Rightarrow_{\mathsf{USD}}b</annotation></semantics></math> and a proposed cut vertex <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>.
 
@@ -188,7 +221,7 @@ The natural-language reading is: a large observed USD functor is lowered to a lo
 
 E-composition extends one anchored USD functor by adding an internal observation point. It should be read as subdivision or refinement, not as a proof that the original record is strictly equal to the composite.
 
-## S-composition: sideways shared stabilization
+### S-composition: sideways shared stabilization
 
 S-composition is the operation most in need of explicit existence conditions. We therefore specify the gap space before defining the operation.
 
@@ -206,7 +239,7 @@ A sideways interaction supplies a monotone update map <math display="block" xmln
 
 Natural-language reading: two USD functors do not eliminate their gap. They update their non-adoptive faces until the same gap is shared as a stable discrepancy. The completion condition is not <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mo>*</mo></msup><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\Delta^*=0</annotation></semantics></math> but shared stability.
 
-## T-composition: temporal turnover
+### T-composition: temporal turnover
 
 Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝖾</mi><mi>𝗊</mi></mstyle><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗆</mi><mi>𝖺</mi><mi>𝗋</mi><mi>𝗍</mi></mstyle><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathsf{Seq}(\mathsf{Smart}_{\mathsf{USD}})</annotation></semantics></math> be the category of finite composable sequences of USD functors. An object is a finite chain <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="script"><mi>ℋ</mi></mstyle><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="double-struck"><mi>ℍ</mi></mstyle><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mstyle mathvariant="double-struck"><mi>ℍ</mi></mstyle><mi>n</mi></msub><mo stretchy="false" form="postfix">)</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">\mathcal H=(\mathbb H_1,\ldots,\mathbb H_n).</annotation></semantics></math>
 
@@ -235,7 +268,7 @@ T-composition touches no entity. It reverses the order of the record chain and a
 
 If no information is lost, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖳</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><annotation encoding="application/x-tex">\mathsf{TComp}</annotation></semantics></math> is involutive up to record equivalence: <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mstyle mathvariant="sans-serif"><mi>𝖳</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mn>2</mn></msup><mo>≅</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">\mathsf{TComp}^2\cong 1.</annotation></semantics></math> If compression, stabilization, or descent has discarded information, the weaker USD-level comparison <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mstyle mathvariant="sans-serif"><mi>𝖳</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mn>2</mn></msup><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="script"><mi>ℋ</mi></mstyle><mo stretchy="false" form="postfix">)</mo><munder><mo>⤳</mo><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></munder><mstyle mathvariant="script"><mi>ℋ</mi></mstyle></mrow><annotation encoding="application/x-tex">\mathsf{TComp}^2(\mathcal H)\mathrel{\leadsto_{\mathsf{USD}}}\mathcal H</annotation></semantics></math> may be all that remains.
 
-## U-composition: upward image
+### U-composition: upward image
 
 D-composition has two common adjoints when the relevant Kan extensions exist. We keep the existential and universal readings separate.
 
@@ -265,11 +298,11 @@ If these lifted Kan extensions do not exist, the relevant U-composition is undef
 
 The natural-language reading is that a local USD functor is pushed upward as a global candidate record. The existential version says that some local contribution is imaged globally; the universal version says that a local condition is extended as a global constraint when possible.
 
-## C-D-E and S-T-U reading order
+### C-D-E and S-T-U reading order
 
 The six operations have two useful reading sequences: <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><mi>𝖢</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mo>→</mo><mstyle mathvariant="sans-serif"><mi>𝖣</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mo>→</mo><mstyle mathvariant="sans-serif"><mi>𝖤</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle></mrow><annotation encoding="application/x-tex">\mathsf{CComp}\longrightarrow\mathsf{DComp}\longrightarrow\mathsf{EComp}</annotation></semantics></math> and <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mo>→</mo><mstyle mathvariant="sans-serif"><mi>𝖳</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mo>→</mo><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖢</mi><mi>𝗈</mi><mi>𝗆</mi><mi>𝗉</mi></mstyle><mi>.</mi></mrow><annotation encoding="application/x-tex">\mathsf{SComp}\longrightarrow\mathsf{TComp}\longrightarrow\mathsf{UComp}.</annotation></semantics></math> The first sequence compresses free records, lowers them, and subdivides anchored local records. The second stabilizes a shared gap, turns the record chain upside down, and then images the result upward.
 
-# S-molecules and residue-stable sideways composites
+## S-molecules and residue-stable sideways composites
 
 The preceding APIs define how USD records may be composed. We now record one derived notion that will be useful in examples: an <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>-molecule. The term is intentionally internal to USD theory. It does not mean a chemical molecule unless a separate physical realization or descent license is supplied.
 
@@ -341,7 +374,7 @@ An <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics>
 
 A covalent bond may be used as an intuitive model of an <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>-molecule: two atoms remain distinguishable while forming a stable shared state through electron-density-mediated interaction. This comparison is only a model reading. USD theory does not redefine covalent bonding, molecular physics, software dependency, or any other base-domain concept. To obtain a USD-free physical conclusion, the relevant descent license must still be supplied in the base theory.
 
-# A syntactic reference implementation
+## A syntactic reference implementation
 
 This section records the minimum syntax needed for a conservative USD calculus. It is intentionally austere.
 
@@ -368,13 +401,13 @@ By induction on the given derivation. Base rules translate to base rules. Record
 
 This theorem is deliberately conditional. It states the safety contract of the reference implementation. A stronger metatheorem for a particular formal calculus would require a fully specified proof system, but this condition is already enough to prevent USD records from acting as hidden proof rules.
 
-# Worked toy model
+## Worked toy model
 
 Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><annotation encoding="application/x-tex">\mathcal C</annotation></semantics></math> be a poset regarded as a category. Let <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mstyle mathvariant="sans-serif"><mi>𝖱</mi><mi>𝖾</mi><mi>𝗅</mi></mstyle><mstyle mathvariant="script"><mi>𝒞</mi></mstyle></msub><mo stretchy="false" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathsf{Rel}_{\mathcal C}(a,b)</annotation></semantics></math> be the truth value of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>≤</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a\leq b</annotation></semantics></math>. Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖡</mi><mi>𝖵</mi><mi>𝗂</mi><mi>𝗌</mi></mstyle><annotation encoding="application/x-tex">\mathsf{BVis}</annotation></semantics></math> select those comparable pairs for which a chosen boundary label is present. Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mstyle mathvariant="sans-serif"><mi>𝖱</mi><mi>𝖾</mi><mi>𝖼</mi></mstyle><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></msub><annotation encoding="application/x-tex">\mathsf{Rec}_{\mathsf{USD}}</annotation></semantics></math> be the product category <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>×</mo><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗍</mi></mstyle></mrow><annotation encoding="application/x-tex">\mathcal C\times\mathsf{St}</annotation></semantics></math> with projection to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗍</mi></mstyle><annotation encoding="application/x-tex">\mathsf{St}</annotation></semantics></math>. The realization projection is <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><msub><mo>pr</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle></msub><mo>:</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>×</mo><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗍</mi></mstyle><mo>→</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>,</mo></mrow><annotation encoding="application/x-tex">r=\operatorname{pr}_{\mathcal C}:\mathcal C\times\mathsf{St}\to\mathcal C,</annotation></semantics></math> so the combined projection is <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>r</mi><mo>,</mo><mi>π</mi><mo stretchy="false" form="postfix">)</mo><mo>:</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>×</mo><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗍</mi></mstyle><mo>→</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>×</mo><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗍</mi></mstyle><mo>,</mo></mrow><annotation encoding="application/x-tex">q=(r,\pi):\mathcal C\times\mathsf{St}\to\mathcal C\times\mathsf{St},</annotation></semantics></math> the identity in this minimal model. Then <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="script"><mi>𝒰</mi></mstyle><mo>≅</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>≅</mo><mstyle mathvariant="script"><mi>𝒟</mi></mstyle></mrow><annotation encoding="application/x-tex">\mathcal U\cong\mathcal C\cong\mathcal D</annotation></semantics></math>, but the two copies are distinguished as fibers. A USD functor is a functor <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math> together with two stance-lifted copies <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>F</mi></msub><mo>,</mo><msub><mi>D</mi><mi>F</mi></msub></mrow><annotation encoding="application/x-tex">U_F,D_F</annotation></semantics></math> over the same <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math> and a boundary label. In this model D-composition is ordinary reindexing of monotone maps, C-composition is pushout of indexing posets when it exists, and T-composition swaps the two copies and reverses a finite chain while preserving realization.
 
 Let the gap lattice be a complete lattice <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Λ</mi><annotation encoding="application/x-tex">\Lambda</annotation></semantics></math>. If a sideways interaction gives a monotone map <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Φ</mi><mo>:</mo><mi>Λ</mi><mo>→</mo><mi>Λ</mi></mrow><annotation encoding="application/x-tex">\Phi:\Lambda\to\Lambda</annotation></semantics></math>, then the set of fixed points is nonempty by the Knaster-Tarski theorem. Choosing the least fixed point gives a canonical minimal shared discrepancy. Choosing the greatest fixed point gives a maximal conservative discrepancy. The choice is part of the model policy.
 
-# Relativistic test model
+## Relativistic test model
 
 The relativistic material is not an application claiming new physics. It is a test model for the USD vocabulary because relativity naturally involves observers, frames, local restrictions, and time-oriented records. The historical sources are Einstein’s 1905 paper on special relativity and his 1916 paper on general relativity .
 
@@ -386,7 +419,7 @@ A time-oriented chain of observation records may be transformed by <math display
 
 If a model uses Lorentz transformations, connections, curvature, or field equations, those structures must be explicitly included in the base category or in the relation witness profunctor. USD functors do not supply them automatically.
 
-# Reviewer-facing checklist
+## Reviewer-facing checklist
 
 For reference, the implementation satisfies the following design checks.
 
@@ -414,7 +447,7 @@ For reference, the implementation satisfies the following design checks.
 
 12. USD-free conclusions require base reasoning or an explicit descent license.
 
-# Open problems
+## Open problems
 
 The present draft is a reference implementation rather than a final metatheory. The main open problems are:
 
@@ -430,7 +463,7 @@ The present draft is a reference implementation rather than a final metatheory. 
 
 6.  Develop nontrivial test models beyond the poset and relativistic sketches.
 
-# Conclusion
+## Conclusion
 
 The central correction in this draft is that USD Functor Theory should be read as a specification of smart functors, not as a metaphorical use of category theory. A USD functor is an ordinary functor with additional record fields: adoptive face, non-adoptive face, boundary witness, and coherence contract. The U and D regions are fibers of one stance-indexed record fibration, and the faces are stance-lifts realized over the same carrier by <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>r</mi><mo>,</mo><mi>π</mi><mo stretchy="false" form="postfix">)</mo><mo>:</mo><msub><mstyle mathvariant="sans-serif"><mi>𝖱</mi><mi>𝖾</mi><mi>𝖼</mi></mstyle><mstyle mathvariant="sans-serif"><mi>𝖴</mi><mi>𝖲</mi><mi>𝖣</mi></mstyle></msub><mo>→</mo><mstyle mathvariant="script"><mi>𝒞</mi></mstyle><mo>×</mo><mstyle mathvariant="sans-serif"><mi>𝖲</mi><mi>𝗍</mi></mstyle><mi>.</mi></mrow><annotation encoding="application/x-tex">q=(r,\pi):\mathsf{Rec}_{\mathsf{USD}}\to\mathcal C\times\mathsf{St}.</annotation></semantics></math> The six composition operations are typed APIs backed by ordinary categorical constructions or explicit existence assumptions, and each operation is defined only when it preserves the stance-lift invariant through <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>. The resulting system can guide interpretation and proof search while remaining conservative over the base language for USD-free conclusions.
 

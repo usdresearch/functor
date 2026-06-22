@@ -88,6 +88,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
       - name: Compile PDF and README
         shell: bash
         run: |
@@ -103,14 +109,8 @@ jobs:
             texlive-latex-recommended \
             texlive-pictures
 
-          latexmk -pdf -interaction=nonstopmode -halt-on-error usd_functor_reference_implementation.tex
-          latexmk -c usd_functor_reference_implementation.tex
-          pandoc usd_functor_reference_implementation.tex \
-            --from=latex \
-            --to=gfm+raw_html \
-            --lua-filter=.github/pandoc/mathml-gfm.lua \
-            --wrap=none \
-            --output=README.md
+          npm ci
+          npm run compile
 
       - name: Commit compiled artifacts
         id: compiled_artifacts
