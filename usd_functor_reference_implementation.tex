@@ -60,6 +60,17 @@
 \newcommand{\SComp}{\mathsf{SComp}}
 \newcommand{\TComp}{\mathsf{TComp}}
 \newcommand{\UComp}{\mathsf{UComp}}
+\newcommand{\Comp}{\mathsf{Comp}}
+\newcommand{\Dec}{\mathsf{Dec}}
+\newcommand{\Fusion}{\mathsf{Fusion}}
+\newcommand{\Fission}{\mathsf{Fission}}
+\newcommand{\USDFusion}{\mathsf{USDFusion}}
+\newcommand{\USDFission}{\mathsf{USDFission}}
+\newcommand{\Sens}{\mathsf{Sens}}
+\newcommand{\Art}{\mathcal A_{\mathrm{art}}}
+\newcommand{\MagicSens}{\mathsf{MagicSens}}
+\newcommand{\PlotSens}{\mathsf{PlotSens}}
+\newcommand{\HallSens}{\mathsf{HallSens}}
 \newcommand{\Cat}{\mathbf{Cat}}
 \newcommand{\Pos}{\mathbf{Pos}}
 \newcommand{\Set}{\mathbf{Set}}
@@ -73,7 +84,6 @@
 \newtheorem{example}[definition]{Example}
 \newtheorem{remark}[definition]{Remark}
 \newtheorem{assumption}[definition]{Assumption}
-\newtheorem{api}[definition]{API}
 
 \theoremstyle{plain}
 \newtheorem{proposition}[definition]{Proposition}
@@ -102,13 +112,14 @@ two-sided stance category.  In this
 sense a USD functor is a categorical analogue of a smart pointer: after
 forgetting the additional fields it is an ordinary functor, while before
 forgetting it carries explicit bookkeeping for observation, non-adoption,
-boundary visibility, and typed composition.  Six API-level compositions
-are specified: compression, downward restriction, extension, sideways
-stabilization, temporal turnover, and upward image.  Each operation is
-presented with its type, existence conditions, mathematical
-implementation, and philosophical reading.  The conservative intent is
-made explicit: USD records may organize proof search or interpretation,
-but USD-free conclusions must be justified in the base theory.
+boundary visibility, and typed composition.  Six causeton types are
+specified: compression, downward restriction, extension, sideways
+stabilization, temporal turnover, and upward image.  Each causeton is
+presented as a composition--decomposition pair with type conditions,
+existence conditions, residue accounting, and philosophical reading.  The
+conservative intent is made explicit: USD records may organize proof
+search or interpretation, but USD-free conclusions must be justified in
+the base theory.
 \end{abstract}
 
 \tableofcontents
@@ -559,11 +570,11 @@ implementation has the shape of a category.
 \section{S-molecules and residue-stable sideways composites}
 % -----------------------------------------------------------------------------
 
-Before listing the six composition APIs, we isolate one record shape that
+Before defining the six causeton types, we isolate one record shape that
 will be used repeatedly in examples: an \(S\)-molecule.  This section does
-not define an API and does not state a new proof rule.  It fixes the local
-data needed to speak about two USD records that remain distinguishable
-while sharing a stable boundary-visible discrepancy.  The term is internal
+not define one of the six causetons and does not state a new proof rule.
+It fixes the local data needed to speak about two USD records that remain
+distinguishable while sharing a stable boundary-visible discrepancy.  The term is internal
 to USD theory; it does not mean a chemical molecule unless a separate
 physical realization or descent license is supplied.
 
@@ -841,16 +852,47 @@ supplied in the base theory.
 \end{remark}
 
 % -----------------------------------------------------------------------------
-\section{The six composition APIs}
+\section{Causetons: six composition--decomposition pairs}
 % -----------------------------------------------------------------------------
 
-The following six operations are specified as APIs.  Each operation has a
-mathematical implementation and a natural-language reading.  None is an
-ordinary proof rule for equality, inequality, or physical truth.
+The six basic USD operations are now treated as causetons.  A causeton is
+not merely a composition step.  It is a typed record of a composition
+operation together with the decomposition phenomenon emitted by that
+operation, the self-anchored residue ledger that stores what is not
+adopted by the main output, and the coherence contract that prevents the
+record from becoming an unlicensed proof rule.
 
-\begin{assumption}[Common closure invariant for composition]
-Every composition API below is required to preserve carrier-realized
-stance-lifts.  If the output has carrier $F':\mathcal X'\to\mathcal C$,
+\begin{definition}[Causeton]
+For
+\[
+  \star\in\{C,D,E,S,T,U\},
+\]
+a \(\star\)-causeton is a typed USD causal record
+\[
+  \mathfrak c_\star
+  =
+  (\Comp_\star,\Dec_\star,\mathbb W_\star,\kappa_\star).
+\]
+Here \(\Comp_\star\) is the \(\star\)-typed composition operation,
+\(\Dec_\star\) is the decomposition phenomenon emitted by that operation,
+\(\mathbb W_\star\) is a self-anchored residue USD functor recording the
+unadopted byproduct, and \(\kappa_\star\) is the coherence contract for the
+causeton.
+\end{definition}
+
+\begin{remark}[Causetons are USD records]
+A causeton is not asserted to be a physical particle, a new causal law, or
+a base-language explanation.  It is a USD record unit.  A physical,
+historical, legal, or psychological reading requires the relevant carrier,
+relation witnesses, boundary witnesses, and descent licenses.
+\end{remark}
+
+\begin{assumption}[Common closure invariant for causetons]
+Every causeton below is required to preserve carrier-realized
+stance-lifts.  If the main output has carrier
+\[
+  F':\mathcal X'\to\mathcal C,
+\]
 then its output faces must satisfy
 \[
   q\circ U_{F'}=(F',\underline U),
@@ -858,14 +900,22 @@ then its output faces must satisfy
   q\circ D_{F'}=(F',\underline D).
 \]
 This is the operational content of $\kappa^{\mathrm{comp}}$: composition
-may change the carrier, boundary, or indexing shape, but it may not detach
-U-face or D-face records from their carrier realization.
+may change the carrier, boundary, or indexing shape, and decomposition may
+emit residue, but neither side may detach U-face or D-face records from
+their carrier realization.
 \end{assumption}
 
-\subsection{C-composition: compression}
+\begin{definition}[C-causeton: compression and interface decomposition]
+The C-causeton
+\[
+  \mathfrak c_C
+  =
+  (\Comp_C,\Dec_C,\mathbb W_C,\kappa_C)
+\]
+has the following data.
 
-\begin{api}[C-composition]
-\textbf{Input.} Two free USD functors
+\textbf{Composition operation.}  The input consists of two free USD
+functors
 \[
   \mathbb H:\mathcal X\to\mathcal C,
   \qquad
@@ -876,31 +926,22 @@ together with an interface span
   \mathcal X\xleftarrow{i}\mathcal I\xrightarrow{j}\mathcal Y
 \]
 and interface compatibility data between $i^*\mathbb H$ and
-$j^*\mathbb K$.
-
-\textbf{Existence condition.} The pushout
+$j^*\mathbb K$.  When the pushout
 \[
   \mathcal X\sqcup_{\mathcal I}\mathcal Y
 \]
 exists in $\Cat$, and the carrier and record data glue along the
-interface in a way compatible with $q$.  In particular, the glued U-face
-and D-face must be stance-lifts of the glued carrier.
-
-\textbf{Output.} A free USD functor
+interface in a way compatible with $q$, the composition operation is
 \[
+  \Comp_C(\mathbb H,\mathbb K)
+  =
   \CComp_{\mathcal I}(\mathbb H,\mathbb K):
   \mathcal X\sqcup_{\mathcal I}\mathcal Y\to\mathcal C.
 \]
-\end{api}
 
-Mathematically, C-composition is gluing or compression by a pushout of
-domains plus compatible gluing of the carrier, adoptive face,
-non-adoptive face, and boundary witness.  It compresses two freely
-available USD functors into one referenceable USD functor.  It does not
-assert that the two inputs were identical; the joint boundary record
-retains the old boundary data and the new interface discrepancy.
-
-A minimal boundary policy is
+\textbf{Decomposition phenomenon.}  Compression emits the decomposition
+of the interface.  The old boundary data do not disappear; the interface
+discrepancy becomes separable as residue.  A minimal boundary policy is
 \[
   \partial_{\CComp(\mathbb H,\mathbb K)}
   =
@@ -908,83 +949,122 @@ A minimal boundary policy is
   \partial_{\mathbb K}\oplus
   \Delta_{\mathcal I}(\mathbb H,\mathbb K),
 \]
-where $\Delta_{\mathcal I}$ is the interface discrepancy supplied by the
-model.
+where $\Delta_{\mathcal I}$ is supplied by the model.
 
-\subsection{D-composition: downward restriction}
+\textbf{Residue ledger.}  The self-anchored ledger
+\[
+  \mathbb W_C:
+  \CComp_{\mathcal I}(\mathbb H,\mathbb K)
+  \Rightarrow_{\USD}
+  \CComp_{\mathcal I}(\mathbb H,\mathbb K)
+\]
+records the projection loss, interface discrepancy, and non-adopted
+boundary material emitted by the compression.
+\end{definition}
 
-\begin{api}[D-composition]
-\textbf{Input.} A context morphism
+\begin{definition}[D-causeton: restriction and background decomposition]
+The D-causeton
+\[
+  \mathfrak c_D
+  =
+  (\Comp_D,\Dec_D,\mathbb W_D,\kappa_D)
+\]
+has the following data.
+
+\textbf{Composition operation.}  The input is a context morphism
 \[
   \rho:\mathcal L\to\mathcal G
 \]
-and a USD functor over the global context $\mathcal G$.
-
-\textbf{Mathematical implementation.} D-composition is reindexing or
-pullback:
+and a USD functor over the global context $\mathcal G$.  The composition
+operation is reindexing or pullback:
 \[
-  \DComp_{\rho}=\rho^*:
-  \Smart_{\USD}(\mathcal G,\mathcal C)\to
-  \Smart_{\USD}(\mathcal L,\mathcal C).
+  \Comp_D(\rho,\mathbb H)
+  =
+  \DComp_{\rho}(\mathbb H)
+  =
+  \rho^*\mathbb H:
+  \mathcal L\to\mathcal C.
 \]
-
-\textbf{Output.} A local USD functor $\rho^*\mathbb H$.
-
-\textbf{Lift condition.} If $\mathbb H$ has carrier $F$, then the output
-has carrier $\rho^*F$, and its faces are the reindexed stance-lifts
-satisfying
+If $\mathbb H$ has carrier $F$, then the output has carrier $\rho^*F$,
+and its faces are the reindexed stance-lifts satisfying
 \[
   q(\rho^*U_F)=(\rho^*F,\underline U),
   \qquad
   q(\rho^*D_F)=(\rho^*F,\underline D).
 \]
-\end{api}
 
-The natural-language reading is: a large observed USD functor is lowered
-to a local context.  The operation is not a proof that the local context
-satisfies the global claim.  It is the typed act of reading the global
-record through a local index.
+\textbf{Decomposition phenomenon.}  Downward restriction decomposes the
+global record into the local reading and the background material that the
+local context no longer displays.  The local output is not a proof that the
+global claim holds locally; it is the typed reading of the global record
+through the chosen index.
 
-\subsection{E-composition: extension by a cut vertex}
+\textbf{Residue ledger.}  The self-anchored ledger
+\[
+  \mathbb W_D:
+  \rho^*\mathbb H\Rightarrow_{\USD}\rho^*\mathbb H
+\]
+records the forgotten global constraints, boundary conditions, and
+nonlocal residue left outside the local restriction.
+\end{definition}
 
-\begin{api}[E-composition]
-\textbf{Input.} An anchored USD functor
+\begin{definition}[E-causeton: cut extension and path decomposition]
+The E-causeton
+\[
+  \mathfrak c_E
+  =
+  (\Comp_E,\Dec_E,\mathbb W_E,\kappa_E)
+\]
+has the following data.
+
+\textbf{Composition operation.}  The input is an anchored USD functor
 \[
   \mathbb H_{a,b}:a\Rightarrow_{\USD}b
 \]
-and a proposed cut vertex $m$.
-
-\textbf{Existence condition.} There is factorization data in the relevant
-arrow category, together with a comparison 2-cell
+and a proposed cut vertex $m$.  When there is factorization data in the
+relevant arrow category, together with a comparison 2-cell
 \[
   \varepsilon_m:
   \mathbb H_{a,m}\circ \mathbb H_{m,b}
   \Rightarrow
   \mathbb H_{a,b}
 \]
-or the reverse comparison, depending on the model.
-
-\textbf{Output.} A subdivided anchored record
+or the reverse comparison, the composition operation is
 \[
+  \Comp_E(\mathbb H_{a,b};m)
+  =
   \EComp_m(\mathbb H_{a,b})
   =
   (\mathbb H_{a,m},\mathbb H_{m,b};\varepsilon_m).
 \]
-\end{api}
 
-E-composition extends one anchored USD functor by adding an internal
-observation point.  It should be read as subdivision or refinement, not as
-a proof that the original record is strictly equal to the composite.
+\textbf{Decomposition phenomenon.}  The cut vertex decomposes a direct
+anchored record into mediated partial records.  The decomposition is a
+subdivision or refinement, not a proof that the original record is
+strictly equal to the subdivided composite.
 
-\subsection{S-composition: sideways shared stabilization}
+\textbf{Residue ledger.}  The self-anchored ledger
+\[
+  \mathbb W_E:
+  \EComp_m(\mathbb H_{a,b})
+  \Rightarrow_{\USD}
+  \EComp_m(\mathbb H_{a,b})
+\]
+records the explanatory excess of the cut vertex, the direction of
+$\varepsilon_m$, and the material not adopted by either partial path.
+\end{definition}
 
-The previous section isolated the shape of a residue-stable sideways
-composite.  S-composition is the typed API that constructs that shape from
-compatible USD functors.
+\begin{definition}[S-causeton: stabilization and gap decomposition]
+The S-causeton
+\[
+  \mathfrak c_S
+  =
+  (\Comp_S,\Dec_S,\mathbb W_S,\kappa_S)
+\]
+has the following data.
 
-\begin{api}[S-composition]
-\textbf{Input.} A pair of S-compatible USD functors $\mathbb H,\mathbb K$,
-together with a complete gap lattice
+\textbf{Composition operation.}  The input is a pair of S-compatible USD
+functors $\mathbb H,\mathbb K$, together with a complete gap lattice
 \[
   \Lambda_{\mathbb H,\mathbb K}
 \]
@@ -994,31 +1074,39 @@ and a monotone gap update map
   \Lambda_{\mathbb H,\mathbb K}\to
   \Lambda_{\mathbb H,\mathbb K}.
 \]
-The value $\Phi(\Delta)$ is the new discrepancy after both sides have
-incorporated the current discrepancy into their non-adoptive records.
-
-\textbf{Existence condition.} A fixed point
+After a fixed point
 \[
   \Delta^*=\Phi_{\mathbb H,\mathbb K}(\Delta^*)
 \]
-is selected.  Existence follows, for example, from the
-Knaster-Tarski fixed point theorem when the stated monotonicity and
-completeness conditions hold.
-
-\textbf{Output.} A sideways stabilized USD record
+is selected, the composition operation is
 \[
+  \Comp_S(\mathbb H,\mathbb K;\Delta^*)
+  =
   \SComp(\mathbb H,\mathbb K;\Delta^*)
   \defeq
   \operatorname{SMol}(\mathbb H,\mathbb K;\Delta^*).
 \]
-\end{api}
+Existence follows, for example, from the Knaster-Tarski fixed point
+theorem when the stated monotonicity and completeness conditions hold.
 
-Natural-language reading: two USD functors do not eliminate their gap.
-They update their non-adoptive faces until the same gap is shared as a
-stable discrepancy.  The completion condition is not $\Delta^*=0$ but
-shared stability.
+\textbf{Decomposition phenomenon.}  Sideways stabilization decomposes the
+interaction into the shared observable molecule and the gap that remains
+nonzero.  The completion condition is not $\Delta^*=0$ but shared
+stability.
 
-\subsection{T-composition: temporal turnover}
+\textbf{Residue ledger.}  The self-anchored ledger is the
+S-molecular ledger already introduced:
+\[
+  \mathbb W_S
+  =
+  \mathbb W_{\operatorname{SMol}(\mathbb H,\mathbb K;\Delta^*)}:
+  \operatorname{SMol}(\mathbb H,\mathbb K;\Delta^*)
+  \Rightarrow_{\USD}
+  \operatorname{SMol}(\mathbb H,\mathbb K;\Delta^*).
+\]
+It records the non-adopted discrepancy, fixed sideways gap, and
+boundary-visible waste emitted by the stabilization.
+\end{definition}
 
 \begin{definition}[Sequence category]
 Let $\Seq(\Smart_{\USD})$ be the category of finite composable sequences
@@ -1052,20 +1140,27 @@ The pure carrier is not altered.  The lifted faces satisfy
 \[
   q(\bar\tau D_F)=(F,\underline U),
   \qquad
-  q(\bar\tau U_F)=(F,\underline D),
+  q(\bar\tau U_F)=(F,\underline D).
 \]
-so T-composition turns the record upside down without touching the
-realized carrier.
 \end{definition}
 
-\begin{api}[T-composition]
-\textbf{Input.} A finite USD functor chain
+\begin{definition}[T-causeton: turnover and directional decomposition]
+The T-causeton
+\[
+  \mathfrak c_T
+  =
+  (\Comp_T,\Dec_T,\mathbb W_T,\kappa_T)
+\]
+has the following data.
+
+\textbf{Composition operation.}  The input is a finite USD functor chain
 \[
   \mathcal H=(\mathbb H_1,\ldots,\mathbb H_n).
 \]
-
-\textbf{Mathematical implementation.}
+The composition operation is temporal turnover:
 \[
+  \Comp_T(\mathcal H)
+  =
   \TComp(\mathcal H)
   \defeq
   \Rev\bigl(\Flip_{U,D}(\mathbb H_1),\ldots,
@@ -1078,17 +1173,20 @@ so that
   (\mathbb H_n^\tau,\ldots,\mathbb H_1^\tau).
 \]
 
-\textbf{Output.} A temporally turned-over USD record chain.
-\end{api}
+\textbf{Decomposition phenomenon.}  Turnover decomposes the original
+reading order, causal direction, responsibility direction, and adopted
+stance assignment into a turned record chain.  A chain that was read
+forward as an identification proposal may be re-read backward as a
+non-adoption record, but this is a transformation of records, not a proof
+of ordinary inequality.
 
-T-composition touches no entity.  It reverses the order of the record
-chain and applies the carrier-preserving stance turnover to every adoptive
-and non-adoptive face.  A chain that was read forward as an identification
-proposal may be re-read backward as a non-adoption record, but this is a
-transformation of records, not a proof of ordinary inequality.
-
-If no information is lost, $\TComp$ is involutive up to record
-equivalence:
+\textbf{Residue ledger.}  The self-anchored ledger
+\[
+  \mathbb W_T:
+  \TComp(\mathcal H)\Rightarrow_{\USD}\TComp(\mathcal H)
+\]
+records the directional residue emitted by reversal and U/D turnover.  If
+no information is lost, $\TComp$ is involutive up to record equivalence:
 \[
   \TComp^2\cong 1.
 \]
@@ -1098,50 +1196,55 @@ weaker USD-level comparison
   \TComp^2(\mathcal H)\uconn \mathcal H
 \]
 may be all that remains.
+\end{definition}
 
-\subsection{U-composition: upward image}
-
+\begin{definition}[U-causeton: upward image]
 D-composition has two common adjoints when the relevant Kan extensions
-exist.  We keep the existential and universal readings separate.
-
-\begin{api}[U-composition]
-Let $\rho:\mathcal L\to\mathcal G$ be a context morphism.
-
-\textbf{Existential upward composition.}
-When the left Kan extension exists, define
+exist.  The U-causeton
 \[
+  \mathfrak c_U
+  =
+  (\Comp_U,\Dec_U,\mathbb W_U,\kappa_U)
+\]
+has the following data.
+
+\textbf{Composition operation.}  Let $\rho:\mathcal L\to\mathcal G$ be a
+context morphism.  When the left Kan extension exists, define the
+existential upward operation by
+\[
+  \Comp_U^{\exists}
+  =
   \UComp^{\exists}_{\rho}
   \defeq
   \Sigma_\rho
   \defeq
   \Lan_{\rho}:
   \Smart_{\USD}(\mathcal L,\mathcal C)\to
-  \Smart_{\USD}(\mathcal G,\mathcal C).
+  \Smart_{\USD}(\mathcal G,\mathcal C),
 \]
-Then
+with
 \[
   \Sigma_\rho\dashv \rho^*.
 \]
-
-\textbf{Universal upward composition.}
-When the right Kan extension exists, define
+When the right Kan extension exists, define the universal upward operation
+by
 \[
+  \Comp_U^{\forall}
+  =
   \UComp^{\forall}_{\rho}
   \defeq
   \Pi_\rho
   \defeq
   \Ran_{\rho}:
   \Smart_{\USD}(\mathcal L,\mathcal C)\to
-  \Smart_{\USD}(\mathcal G,\mathcal C).
+  \Smart_{\USD}(\mathcal G,\mathcal C),
 \]
-Then
+with
 \[
   \rho^*\dashv \Pi_\rho.
 \]
-
-\textbf{Smart-lift condition.} These Kan extensions are admitted as
-U-compositions only when they lift from the pure carrier category to
-$\Smart_{\USD}$.  For example, if
+These Kan extensions are admitted as U-causetons only when they lift from
+the pure carrier category to $\Smart_{\USD}$.  For example, if
 $\Sigma_\rho\mathbb H$ has carrier $\Lan_\rho F$, then its faces must be
 records over that carrier:
 \[
@@ -1149,29 +1252,35 @@ records over that carrier:
   \qquad
   q\circ D_{\Lan_\rho F}=(\Lan_\rho F,\underline D),
 \]
-and similarly for $\Pi_\rho$ and $\Ran_\rho F$.  The existence of the
-ordinary Kan extension of $F$ is therefore not enough; the USD record and
-contract data must lift with it.
-\end{api}
+and similarly for $\Pi_\rho$ and $\Ran_\rho F$.
 
-If these lifted Kan extensions do not exist, the relevant U-composition is
-undefined in the smart category even when the carrier Kan extension exists.
+\textbf{Decomposition phenomenon.}  Upward image decomposes a local record
+into the global candidate and the local specificity not adopted by that
+global reading.  The existence of the ordinary Kan extension of $F$ is not
+enough; the USD record and contract data must lift with it.
 
-The natural-language reading is that a local USD functor is pushed upward
-as a global candidate record.  The existential version says that some
-local contribution is imaged globally; the universal version says that a
-local condition is extended as a global constraint when possible.
+\textbf{Residue ledger.}  The self-anchored ledger
+\[
+  \mathbb W_U:
+  \UComp_{\rho}(\mathbb H)\Rightarrow_{\USD}\UComp_{\rho}(\mathbb H)
+\]
+records the boundary conditions, local assumptions, and non-generalized
+material left behind by the upward image.  If the lifted Kan extension
+does not exist, the corresponding U-causeton is undefined in the smart
+category even when the carrier Kan extension exists.
+\end{definition}
 
-\subsection{API coverage and saturation}
+\subsection{Causeton coverage and saturation}
 
-The six operations are APIs, not phases of an algorithm.  A model may call
-them in any order, may call the same API more than once, and may feed the
-records produced by one API into any other API whenever the input and
-existence conditions match.  What can be required without ambiguity is not
-a global application order, but a coverage certificate.
+The six causetons are not phases of an algorithm.  A model may instantiate
+them in any order, may instantiate the same causeton type more than once,
+and may feed the records produced by one causeton into any other causeton
+whenever the input and existence conditions match.  What can be required
+without ambiguity is not a global application order, but a coverage
+certificate.
 
-\begin{definition}[API agenda]
-For a USD test model, an API agenda is a six-tuple
+\begin{definition}[Causeton agenda]
+For a USD test model, a causeton agenda is a six-tuple
 \[
   \mathcal A
   =
@@ -1179,14 +1288,16 @@ For a USD test model, an API agenda is a six-tuple
    \mathcal A_S,\mathcal A_T,\mathcal A_U),
 \]
 where $\mathcal A_\star$ is a finite or indexed family of typed candidate
-calls to the corresponding API.  The agenda is six-covered when no
-component is empty and every listed candidate call supplies the input data
-and existence conditions required by its API.
+instances of the corresponding causeton.  The agenda is
+six-causeton-covered when no component is empty and every listed candidate
+supplies the input data,
+existence conditions, decomposition phenomenon, residue ledger, and
+coherence contract required by its causeton type.
 \end{definition}
 
 \begin{definition}[Saturation closure]
 Let $R_0$ be a family of seed USD records and let $\mathcal A$ be a
-six-covered API agenda.  Write
+six-causeton-covered causeton agenda.  Write
 \[
   \Gamma_{\mathcal A}(R)
   =
@@ -1194,9 +1305,9 @@ six-covered API agenda.  Write
    \cup E_{\mathcal A}(R)\cup S_{\mathcal A}(R)
    \cup T_{\mathcal A}(R)\cup U_{\mathcal A}(R)
 \]
-for the family obtained by adding all well-typed outputs of the candidate
-calls whose inputs are present in $R$.  A saturated expansion is a fixed
-point
+for the family obtained by adding all well-typed outputs and residue
+ledgers of the candidate instances whose inputs are present in $R$.  A
+saturated expansion is a fixed point
 \[
   R^*=\Gamma_{\mathcal A}(R^*)
 \]
@@ -1206,20 +1317,213 @@ only when every generated record preserves the common stance-lift
 invariant through $q$.
 \end{definition}
 
-\begin{definition}[Coverage certificate]
-A coverage certificate for a USD test model consists of a six-covered API
-agenda $\mathcal A$, a saturated expansion $R^*$, and a check that the
-realized API set is exactly
+\begin{definition}[Causeton coverage certificate]
+A coverage certificate for a USD test model consists of a
+six-causeton-covered causeton agenda $\mathcal A$, a saturated expansion
+$R^*$, and a check that the realized causeton types are exactly
 \[
-  \{\CComp,\DComp,\EComp,\SComp,\TComp,\UComp\}.
+  \{\mathfrak c_C,\mathfrak c_D,\mathfrak c_E,
+    \mathfrak c_S,\mathfrak c_T,\mathfrak c_U\}.
 \]
-Thus missing use of any one API is a failure of the test model, while
-multiple uses of an API are permitted whenever they are typed.
+Thus missing use of any one causeton type is a failure of the test model,
+while multiple instances of a causeton type are permitted whenever they are
+typed.
 \end{definition}
 
 Diagrams in examples may still display dependency arrows between records.
-Such arrows describe which outputs are used as later inputs; they are not
-a global execution order for the six APIs.
+Such arrows describe which outputs and residue ledgers are used as later
+inputs; they are not a global execution order for the six causetons.
+
+% -----------------------------------------------------------------------------
+\section{Sensitons: art-anchored perceptual connectors}
+% -----------------------------------------------------------------------------
+
+Causetons record typed composition--decomposition pairs.  Sensitons record
+how selected causeton precedence patterns are anchored inside an artistic
+observation context and become perceptible as controlled abstraction.  A
+sensiton is therefore not a violation pattern.  It is a connector from a
+causeton pair to an observer's cognitive S-polymer under the boundary of a
+work, medium, performance, recording, exhibition, or other art-anchored
+frame.
+
+\begin{definition}[Art anchoring]
+An art anchoring is a context
+\[
+  \Art
+\]
+whose objects are works, media, performances, recordings, scripts, scores,
+images, scenes, audiences, exhibition spaces, or other records belonging
+to an artistic observation frame.  The anchoring supplies a boundary
+contract asserting that records inside \(\Art\) are not automatically
+licensed as USD-free real-world commands, empirical claims, or moral
+judgments.
+\end{definition}
+
+\begin{remark}[Why art anchoring is needed]
+The precedence patterns below can be unsafe when they are read as
+unlicensed claims about the base world.  Inside \(\Art\), the same
+patterns may become aesthetic operations: symbol formation, plot
+compression, reversal, surprise, estrangement, catharsis, or controlled
+recomposition.  Art anchoring is the contract that keeps the emitted
+fission perceptible without immediately turning it into an external
+descent.
+\end{remark}
+
+\begin{definition}[Sensiton]
+Let \(O\) be an observer with cognitive S-polymer \(\mathbb P_O\).  A
+sensiton is an art-anchored USD perceptual record
+\[
+  \mathfrak s
+  =
+  (\mathfrak c_X\prec\mathfrak c_Y,
+   \Art,
+   O,
+   \mathbb P_O,
+   \mathbb W_{\mathfrak s},
+   \kappa_{\mathfrak s}),
+\]
+where \(\mathfrak c_X\prec\mathfrak c_Y\) means that the \(X\)-causeton
+is perceptually staged before the \(Y\)-causeton inside \(\Art\).  The
+ledger \(\mathbb W_{\mathfrak s}\) records the perceptual residue emitted
+by that staging, and \(\kappa_{\mathfrak s}\) keeps the record inside the
+art anchoring unless an explicit descent license is supplied.
+\end{definition}
+
+\begin{definition}[Magic-Sensiton]
+The Magic-Sensiton is the art-anchored precedence pattern
+\[
+  \MagicSens
+  \defeq
+  \Sens(U\prec D).
+\]
+It stages a U-causeton before the corresponding D-causeton.  In an
+unanchored setting this may look like an upward image before local
+restriction, context, or verification.  Inside \(\Art\), the same pattern
+is read as magic, symbol, mythic ascent, or imaginative world-formation:
+a local or weakly anchored record is first lifted into a larger possible
+world and only afterward lowered into scenes, bodies, materials, or
+particular perceptions.
+\end{definition}
+
+\begin{definition}[Plot-Sensiton]
+The Plot-Sensiton is the art-anchored precedence pattern
+\[
+  \PlotSens
+  \defeq
+  \Sens(C\prec E).
+\]
+It stages a C-causeton before the corresponding E-causeton.  In an
+unanchored setting this may compress anchored records before the relevant
+cut vertices, tests, or mediation points are exposed.  Inside \(\Art\),
+the same pattern is read as plot: fragments are first compressed into a
+line, myth, scene, motif, or narrative pressure, and only afterward
+subdivided by turns, cuts, revelations, delays, and reversals.
+\end{definition}
+
+\begin{definition}[Hall-Sensiton]
+The Hall-Sensiton is the art-anchored precedence pattern
+\[
+  \HallSens
+  \defeq
+  \Sens(T\prec S).
+\]
+It stages a T-causeton before the corresponding S-causeton.  In an
+unanchored setting this may reverse a system before its stabilizing
+S-molecular reading has been supplied.  Inside \(\Art\), the same pattern
+is read as hall, stage, theater, or performance space: time order,
+viewpoint, role, and U/D stance are turned before the work restabilizes
+them as an observable scene.  The observer may experience surprise,
+estrangement, dread, recognition, or catharsis, but these effects remain
+anchored to the work unless a descent license carries them outside
+\(\Art\).
+\end{definition}
+
+\begin{remark}[Order of the three basic sensitons]
+The order
+\[
+  \MagicSens,\qquad
+  \PlotSens,\qquad
+  \HallSens
+\]
+follows the increasing externalization of abstraction.  Magic-Sensiton
+forms a possible world, Plot-Sensiton compresses fragments into a line of
+readability, and Hall-Sensiton stages the line before an observer through
+turned time, role, and stance.
+\end{remark}
+
+\begin{remark}[Sensitons and USD fission]
+Sensitons are designed to emit controlled USD fission in the observer's
+cognitive S-polymer.  The fission is not treated as a defect merely
+because it occurs.  It becomes aesthetically useful when the art anchoring
+allows the observer to hold the fragments, residues, and reversed readings
+long enough for recomposition inside the work.
+\end{remark}
+
+% -----------------------------------------------------------------------------
+\section{USD fusion and USD fission}
+% -----------------------------------------------------------------------------
+
+Causetons separate the typed operation from what an observer sees.  The
+operation side is composition and decomposition.  The observational side
+is USD fusion and USD fission.  Fusion and fission are treated here as two
+provisional USD phenomena; later refinements may classify them into
+C/D/E/S/T/U-specific fusion and fission types.
+
+\begin{definition}[USD fusion]
+Let \(\mathfrak c_\star\) be a causeton with main output \(\mathbb M\),
+residue ledger \(\mathbb W_\star\), and observer or boundary resolution
+\(O\).  USD fusion is the observer-relative event
+\[
+  \USDFusion_O(\mathfrak c_\star,\mathbb M)
+\]
+in which \(\mathbb M\) is readable as one boundary-visible composite
+record.  Fusion is not identity collapse: the residue ledger remains
+attached, and the U-face and D-face remain stance-lifted over their
+realized carrier.
+\end{definition}
+
+\begin{definition}[USD fission]
+Let \(\mathfrak c_\star\) be a causeton with decomposition phenomenon
+\(\Dec_\star\), residue ledger \(\mathbb W_\star\), and observer or entity
+polymer \(\mathbb P_O\).  USD fission is the observer-relative event
+\[
+  \USDFission_O(\mathfrak c_\star,\mathbb P_O)
+\]
+in which the emitted decomposition becomes readable inside \(\mathbb P_O\)
+as multiple fragments or separated partial records.  It may also appear as
+contradictions, unintelligible residue, uncanny residue, or other
+boundary-visible non-unified material.  Fission is a USD observation, not
+by itself a USD-free assertion that the source theory is false.
+\end{definition}
+
+\begin{definition}[Controlled and critical fission]
+USD fission is controlled for an observer \(O\) when the emitted fragments
+can be reassembled, interpreted, or used under the observer's coherence
+contract without losing the relevant boundary witnesses.  It is critical
+when the emitted residue exceeds the observer's available divergence,
+ejection, or recomposition capacity and the record can no longer be read as
+one stable composite at the chosen resolution.
+\end{definition}
+
+\begin{remark}[No intrinsic moral valence]
+USD fusion and USD fission are observational phases, not moral judgments.
+A fission may be destructive, controlled, explanatory, analytic, or
+creative depending on the surrounding carrier model and descent licenses.
+Likewise, a fusion may be stabilizing, misleading, compressive, or
+over-adoptive depending on the residue ledger it emits.
+\end{remark}
+
+\begin{remark}[Composition and decomposition versus fusion and fission]
+Composition and decomposition belong to the causeton record.  Fusion and
+fission are how the output and emitted residue are observed.  Thus the
+reference slogan is:
+\[
+  \text{composition and fusion, decomposition and fission}.
+\]
+This slogan does not identify USD fusion with physical nuclear fusion, nor
+USD fission with physical nuclear fission.  Those readings require
+separate base-domain realization.
+\end{remark}
 
 \section{A syntactic reference implementation}
 % -----------------------------------------------------------------------------
@@ -1890,9 +2194,9 @@ The Oppenheimer test is an interdisciplinary stress test for ethical
 translation.  Its source data use only two categories: a category of
 theoretical nuclear physics and a category of public policy.  The
 philosophical forum and the trial of Socrates are not assumed as source
-categories.  They appear only after the test supplies a six-API coverage
-certificate and saturates the generated USD record family.  No global
-application order of the APIs is part of the claim.
+categories.  They appear only after the test supplies a six-causeton
+coverage certificate and saturates the generated USD record family.  No
+global application order of the causetons is part of the claim.
 
 Historically, the Manhattan Project made nuclear fission and explosive
 chain reactions into an organized weapon program.  The Smyth Report
@@ -2180,8 +2484,8 @@ mapping is:
   \text{unresolved residue} &\mapsto& \text{loss of rewind rights}.
 \end{array}
 \]
-The coverage certificate for the Oppenheimer test is the six-covered
-agenda
+The coverage certificate for the Oppenheimer test is the
+six-causeton-covered agenda
 \[
 \begin{aligned}
   \mathcal A_C
@@ -2210,8 +2514,8 @@ agenda
 \]
 The agenda may be saturated in any order, and the displayed dependencies
 only say which generated records are available as inputs to other typed
-API calls.  A stronger historical or moral conclusion is not produced by
-the saturation itself.
+causeton instances.  A stronger historical or moral conclusion is not
+produced by the saturation itself.
 The transformation is therefore not a metaphorical jump from physics to
 Athens.  It passes through the common S-molecular form:
 \[
@@ -2270,7 +2574,8 @@ The present draft is a reference implementation rather than a final
 metatheory.  The main open problems are:
 \begin{enumerate}[leftmargin=*]
   \item Refine preferred subclasses of coherence contracts $\kappa_F$ and
-  prove closure under all six composition APIs in nontrivial models.
+  prove closure under all six causeton composition--decomposition types in
+  nontrivial models.
   \item Compare the carrier-realized USD record fibration with displayed categories,
   double categories, fibrations of proofs, and decorated functors.
   \item Give a fully formal sequent calculus or type theory for
@@ -2298,11 +2603,12 @@ carrier by
 \[
   q=(r,\pi):\RecUSD\to\mathcal C\times\St.
 \]
-The six composition operations are typed APIs backed by ordinary categorical
-constructions or explicit existence assumptions, and each operation is
-defined only when it preserves the stance-lift invariant through $q$.  The
-resulting system can guide interpretation and proof search while remaining
-conservative over the base language for USD-free conclusions.
+The six causetons are typed composition--decomposition pairs backed by
+ordinary categorical constructions or explicit existence assumptions, and
+each causeton is defined only when it preserves the stance-lift invariant
+through $q$.  The resulting system can guide interpretation and proof
+search while remaining conservative over the base language for USD-free
+conclusions.
 
 \begin{thebibliography}{99}
 
